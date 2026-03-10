@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { Moon, Sun, Flame } from 'lucide-react'
+import { useTheme } from '@/components/theme-provider'
 import ContentCard from '@/components/content-card'
 import ExpandedModal from '@/components/expanded-modal'
 
@@ -117,13 +119,60 @@ By understanding these mechanisms, students and professionals can implement evid
 ]
 
 export default function Home() {
+  const { theme, toggleTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [content, setContent] = useState<ContentItem[]>(SAMPLE_CONTENT)
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [showTopBar, setShowTopBar] = useState(true)
+  const [streak, setStreak] = useState(7)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const lastScrollRef = useRef(0)
 
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    const handleScroll = () => {
+      const currentScroll = scrollContainer.scrollTop
+      const scrollDelta = currentScroll - lastScrollRef.current
+
+      // Show/hide top bar based on scroll direction
+      if (scrollDelta > 10) {
+        setShowTopBar(false)
+      } else if (scrollDelta < -10) {
+        setShowTopBar(true)
+      }
+
+      lastScrollRef.current = currentScroll
+
+      // Auto-scroll to next full page when near a snap point
+      const scrollHeight = scrollContainer.scrollHeight
+      const clientHeight = scrollContainer.clientHeight
+      const currentPage = Math.round(currentScroll / clientHeight)
+      const snapPoint = currentPage * clientHeight
+
+      if (
+        Math.abs(currentScroll - snapPoint) < 50 &&
+        Math.abs(scrollDelta) < 5 &&
+        currentScroll > 0
+      ) {
+        const nextSnapPoint = (currentPage + 1) * clientHeight
+        if (nextSnapPoint < scrollHeight) {
+          scrollContainer.scrollTo({
+            top: nextSnapPoint,
+            behavior: 'smooth',
+          })
+        }
+      }
+    }
+
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
+    return () => scrollContainer.removeEventListener('scroll', handleScroll)
   }, [])
 
   const handleSave = (id: number) => {
@@ -136,6 +185,8 @@ export default function Home() {
     setContent(content.map(item =>
       item.id === id ? { ...item, liked: !item.liked } : item
     ))
+    // Increase streak when liking
+    setStreak(prev => prev + 1)
   }
 
   const handleShare = (id: number) => {
@@ -158,10 +209,44 @@ export default function Home() {
 
   return (
     <main className="h-screen w-screen bg-background overflow-hidden flex flex-col">
+      {/* Top Navigation Bar - Auto-hide on scroll */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-border transition-all duration-300 ease-in-out ${
+          showTopBar ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
+        <div className="h-16 flex items-center justify-between px-4 sm:px-6">
+          {/* Streak Display */}
+          <div className="flex items-center gap-2">
+            <Flame className="w-5 h-5 text-orange-500" />
+            <span className="text-sm font-semibold">{streak}</span>
+          </div>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? (
+              <Moon className="w-5 h-5" />
+            ) : (
+              <Sun className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+      </div>
+
       {/* Content Feed */}
-      <div className="flex-1 overflow-y-scroll snap-y snap-mandatory">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-scroll snap-y snap-mandatory pt-16 sm:pt-0"
+      >
         {content.map((item) => (
-          <div key={item.id} className="snap-start h-screen w-screen flex items-center justify-center">
+          <div
+            key={item.id}
+            className="snap-start h-screen w-full flex items-center justify-center"
+          >
             <ContentCard
               item={item}
               onReadMore={() => handleReadMore(item)}
