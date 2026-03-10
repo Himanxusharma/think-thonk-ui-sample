@@ -1,6 +1,6 @@
 'use client'
 
-import { BookmarkIcon, Heart, Share2 } from 'lucide-react'
+import { BookmarkIcon, Heart, Share2, Maximize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface ContentItem {
@@ -19,6 +19,7 @@ interface ContentCardProps {
   onSave: () => void
   onLike: () => void
   onShare: () => void
+  onFullscreen: () => void
 }
 
 export default function ContentCard({
@@ -27,6 +28,7 @@ export default function ContentCard({
   onSave,
   onLike,
   onShare,
+  onFullscreen,
 }: ContentCardProps) {
   return (
     <div className="w-full h-full bg-background flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
@@ -112,6 +114,21 @@ export default function ContentCard({
             />
             <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
               Share
+            </span>
+          </button>
+
+          {/* Fullscreen Button */}
+          <button
+            onClick={onFullscreen}
+            className="flex flex-col items-center gap-1 group"
+            aria-label="Fullscreen view"
+          >
+            <Maximize2
+              size={24}
+              className="text-muted-foreground group-hover:text-foreground transition-colors"
+            />
+            <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+              Expand
             </span>
           </button>
         </div>

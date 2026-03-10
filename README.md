@@ -1,6 +1,17 @@
 # Think-Thonk UI - Content Feed Application
 
-A modern, minimalist content discovery feed with smooth full-page scrolling, built with Next.js 16, React 19, and Tailwind CSS 4. This is a professional design system documentation for perfect UI reproduction.
+A modern, minimalist content discovery feed with smooth full-page scrolling and fullscreen content viewing, built with Next.js 16, React 19, and Tailwind CSS 4. This is a professional design system documentation for perfect UI reproduction.
+
+## Key Features
+- **Scrollbar-Free Design**: Clean feed with hidden scrollbars for distraction-free reading
+- **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically
+- **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
+- **Fullscreen Content Mode**: Click "Expand" to view full article content with auto-scrolling between posts
+- **Smart Navigation**: Auto-snap to next/previous content with smooth scrolling
+- **Loading Indicators**: Visual cues at content boundaries (start/end)
+- **Action Buttons**: Like, Save, Share, and Expand buttons available in both feed and fullscreen modes
+- **Streak Tracking**: Real-time streak counter with flame icon display in header
+- **Dark/Light Theme**: Automatic theme switching with system preference detection
 
 ---
 
@@ -90,6 +101,13 @@ The application uses **oklch** color space for superior color consistency across
   - Secondary: `text-foreground/80` (80% opacity)
   - Tertiary: `text-foreground/75` (75% opacity)
 
+### Text Selection
+- **Selection Behavior**: `::selection` pseudo-element styled with theme colors
+- **Background**: Uses `var(--primary)` color
+- **Text Color**: Uses `var(--primary-foreground)` for optimal contrast
+- **Applies To**: All text content across the application
+- **Compatibility**: Works with `::-moz-selection` for Firefox
+
 ---
 
 ## 🎯 Layout & Spacing
@@ -165,10 +183,12 @@ lg:     ≥ 1024px (laptops, desktops)
 - "Read More" button: Underlined link with hover state
 
 **Bottom Section** (Actions):
-- Three action buttons: Save, Like, Share
+- Four action buttons: Save, Like, Share, Expand
 - Layout: Horizontal flex with `gap-6 sm:gap-8`
 - Button style: Icon + label flex column
 - States: Fill icon when active, outline when inactive
+- **Expand Button**: Opens fullscreen content view with full article and auto-scrolling
+- Icon Set: BookmarkIcon (Save), Heart (Like), Share2 (Share), Maximize2 (Expand)
 
 #### 3. **Expanded Modal** (`components/expanded-modal.tsx`)
 - **Backdrop**: `bg-background/95 backdrop-blur-sm`
@@ -182,7 +202,23 @@ lg:     ≥ 1024px (laptops, desktops)
 - Expanded content paragraphs with generous spacing
 - Bullet lists within sections
 
-#### 4. **Theme Provider** (`components/theme-provider.tsx`)
+#### 4. **Fullscreen Content** (`components/fullscreen-content.tsx`)
+- **Trigger**: "Expand" button on content cards
+- **Layout**: Full-screen snap-scroll presentation matching feed style
+- **Header**: Sticky with action buttons (Save, Like, Share) + Close (X) button
+- **Streak Display**: Shows current streak count in header (left side)
+- **Navigation**: 
+  - Scroll down to next post (auto-snap at scroll end)
+  - Scroll up to previous post
+  - Pressing ESC or clicking X button closes fullscreen
+- **Content Area**: Full viewport height with centered max-width container
+- **Indicators**: 
+  - "You've reached the end" message at last post
+  - "Beginning of content" message at first post
+  - Scroll prompts guide user navigation
+- **State Sync**: Like/Save/Share states persist between feed and fullscreen views
+
+#### 5. **Theme Provider** (`components/theme-provider.tsx`)
 - Wraps application with `next-themes` library
 - Attributes: `class` (applies dark class to html element)
 - Default theme: `light`
@@ -203,6 +239,12 @@ lg:     ≥ 1024px (laptops, desktops)
 - **Framework**: Latest with `@tailwindcss/postcss`
 - **Custom Configuration**: Via `@theme` inline in globals.css
 - **Radius**: `--radius: 0.375rem` (6px)
+
+### Border Styling
+- **Card Borders**: Removed from content cards for seamless aesthetic (`.border-border` class removed)
+- **Modal/Header Borders**: Strategic use of `border-b border-border` for visual separation in sticky headers
+- **Border Color**: Defined by `--border` CSS variable (oklch values)
+- **Minimal Approach**: Only borders where necessary for functional clarity
 
 ### CSS Custom Properties (Design Tokens)
 All colors are defined as CSS variables in `:root` (light mode) and `.dark` (dark mode) with oklch values.
@@ -243,11 +285,19 @@ All colors are defined as CSS variables in `:root` (light mode) and `.dark` (dar
 
 ## 🎬 Interaction Patterns
 
+### Scrollbar Styling
+- **Hidden Scrollbars**: Maintained scrollability while hiding visual scrollbars
+- **WebKit Browsers**: `::-webkit-scrollbar { display: none; }`
+- **Firefox**: `scrollbar-width: none;`
+- **Internet Explorer**: `-ms-overflow-style: none;`
+- **Applies To**: `html` element to hide main page scrollbar
+
 ### Scroll Behavior
 - **Snap Type**: `snap-y snap-mandatory` (full-page vertical snapping)
 - **Snap Alignment**: `snap-start` on each content section
 - **Auto-scroll**: Triggered when scrolling slows near snap points
 - **Smooth Scroll**: `scroll-behavior: smooth` for programmatic scrolls
+- **Passive Listeners**: Scroll events use `{ passive: true }` for performance
 
 ### Button Interactions
 
@@ -358,18 +408,19 @@ All variables redefine in `.dark` class with appropriate oklch values:
 ```
 /vercel/share/v0-project/
 ├── app/
-│   ├── layout.tsx           # Root layout with theme provider
-│   ├── page.tsx             # Main feed with content & scroll logic
-│   └── globals.css          # Global styles & design tokens
+│   ├── layout.tsx           # Root layout with theme provider & hydration fixes
+│   ├── page.tsx             # Main feed with content, scroll logic & fullscreen handler
+│   └── globals.css          # Global styles, design tokens, scrollbar hiding, text selection
 ├── components/
-│   ├── content-card.tsx     # Individual card component
-│   ├── expanded-modal.tsx   # Full content modal
-│   ├── theme-provider.tsx   # Theme wrapper
+│   ├── content-card.tsx     # Individual card component with Expand button
+│   ├── expanded-modal.tsx   # Modal for "Read More" content view
+│   ├── fullscreen-content.tsx # Fullscreen post view with auto-scrolling & indicators
+│   ├── theme-provider.tsx   # Theme wrapper with next-themes
 │   └── ui/                  # Radix UI component library
 ├── public/                  # Static assets & icons
 ├── package.json             # Dependencies & scripts
 ├── tsconfig.json            # TypeScript configuration
-└── tailwind.config.js       # (Implicit - configured in globals.css)
+└── README.md                # This file (complete design documentation)
 ```
 
 ---
@@ -435,9 +486,32 @@ To recreate this exact UI design on any system:
 ## 🐛 Fixed Issues
 
 - **Hydration Mismatch**: Added `suppressHydrationWarning={true}` to both `<html>` and `<body>` tags to resolve server/client rendering conflicts with the theme provider
+- **Scrollbar Visibility**: Hidden scrollbars on main feed using CSS (`::-webkit-scrollbar`, `scrollbar-width`, `-ms-overflow-style`)
+- **Text Selection**: Added theme-aware text selection styling with `::selection` pseudo-element
+- **Border Visibility**: Removed unnecessary borders from content cards for cleaner aesthetic (`border-border` class removed from base styles)
+- **Fullscreen Navigation**: Implemented auto-scrolling snap points in fullscreen mode with boundary indicators
+- **Action Buttons**: Added "Expand" button to content cards for fullscreen viewing
+- **State Persistence**: Ensured Like/Save/Share states sync between feed and fullscreen views
+- **Keyboard Navigation**: ESC key closes fullscreen mode; added keyboard event listeners
 
 ---
 
-**Last Updated**: March 11, 2026  
+## 🎯 Reproduction Checklist
+
+When recreating this design:
+
+1. **Scrollbars**: Implement CSS rules for hidden scrollbars across all browsers
+2. **Borders**: Remove card borders (`border-border` class) for seamless aesthetic
+3. **Text Selection**: Style `::selection` with primary color and primary-foreground
+4. **Content Cards**: Include Save, Like, Share, and Expand buttons
+5. **Fullscreen Mode**: Create separate full-screen view with auto-scrolling navigation
+6. **Indicators**: Add "reached end" and "beginning" messages at boundaries
+7. **State Sync**: Ensure Like/Save states persist between views
+8. **Keyboard**: Implement ESC to close fullscreen
+9. **Snap Points**: Use mandatory snap-scroll for smooth full-page navigation
+10. **Theme Colors**: Apply oklch values for perfect color consistency
+
+**Last Updated**: March 11, 2026 (v2.0 - Fullscreen Mode)
 **Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
 **Status**: Production Ready ✓
+**Features**: Feed Scrolling • Fullscreen Viewing • Smart Navigation • Theme Aware Selection • Borderless Design • Streak Tracking

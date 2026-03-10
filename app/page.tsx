@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes'
 import { Moon, Sun, Flame } from 'lucide-react'
 import ContentCard from '@/components/content-card'
 import ExpandedModal from '@/components/expanded-modal'
+import FullscreenContent from '@/components/fullscreen-content'
 
 interface ContentItem {
   id: number
@@ -124,6 +125,8 @@ export default function Home() {
   const [content, setContent] = useState<ContentItem[]>(SAMPLE_CONTENT)
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [fullscreenIndex, setFullscreenIndex] = useState(0)
   const [showTopBar, setShowTopBar] = useState(true)
   const [streak, setStreak] = useState(7)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -203,6 +206,16 @@ export default function Home() {
     setIsModalOpen(true)
   }
 
+  const handleFullscreen = (item: ContentItem) => {
+    const index = content.findIndex(c => c.id === item.id)
+    setFullscreenIndex(index)
+    setIsFullscreen(true)
+  }
+
+  const handleCloseFullscreen = () => {
+    setIsFullscreen(false)
+  }
+
   if (!mounted) {
     return null
   }
@@ -253,6 +266,7 @@ export default function Home() {
               onSave={() => handleSave(item.id)}
               onLike={() => handleLike(item.id)}
               onShare={() => handleShare(item.id)}
+              onFullscreen={() => handleFullscreen(item)}
             />
           </div>
         ))}
@@ -264,6 +278,19 @@ export default function Home() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           content={selectedContent}
+        />
+      )}
+
+      {/* Fullscreen Content */}
+      {isFullscreen && (
+        <FullscreenContent
+          content={content}
+          initialIndex={fullscreenIndex}
+          onClose={handleCloseFullscreen}
+          onSave={handleSave}
+          onLike={handleLike}
+          onShare={handleShare}
+          streak={streak}
         />
       )}
     </main>

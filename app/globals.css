@@ -118,7 +118,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply outline-ring/50;
   }
   
   html {
@@ -133,5 +133,16 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Text selection styling to match theme */
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  ::-moz-selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
   }
 }
