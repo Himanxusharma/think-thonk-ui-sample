@@ -1,6 +1,6 @@
 'use client'
 
-import { BookmarkIcon, Heart, Share2 } from 'lucide-react'
+import { BookmarkIcon, Heart, Share2, Maximize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface ContentItem {
@@ -32,9 +32,9 @@ export default function ContentCard({
   onFullscreen,
 }: ContentCardProps) {
   return (
-    <div className="w-full h-full bg-background flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
+    <div className="w-full h-full bg-background flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 relative">
       {/* Container */}
-      <div className="w-full max-w-lg flex flex-col h-full justify-between">
+      <div className="w-full max-w-lg flex flex-col h-full justify-between relative">
         {/* Top Section - Content */}
         <div className="flex-1 flex flex-col justify-center gap-4 sm:gap-6">
           {/* Category Badge */}
@@ -102,7 +102,7 @@ export default function ContentCard({
               size={24}
               className={`transition-all ${
                 item.liked
-                  ? 'fill-foreground text-foreground'
+                  ? 'fill-red-500 text-red-500'
                   : 'text-muted-foreground group-hover:text-foreground'
               }`}
             />
@@ -126,6 +126,15 @@ export default function ContentCard({
             </span>
           </button>
         </div>
+
+        {/* Fullscreen Button - Bottom Right */}
+        <button
+          onClick={onFullscreen}
+          className="absolute bottom-8 right-4 sm:right-6 p-3 rounded-lg bg-primary hover:bg-primary/90 transition-colors shadow-lg"
+          aria-label="Fullscreen view"
+        >
+          <Maximize2 size={24} className="text-primary-foreground" />
+        </button>
       </div>
     </div>
   )

@@ -6,12 +6,16 @@ A modern, minimalist content discovery feed with smooth full-page scrolling and 
 - **Scrollbar-Free Design**: Fully hidden scrollbars across all browsers using aggressive CSS rules for Chrome, Firefox, Safari, and Edge
 - **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
 - **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
-- **Fullscreen Content Mode**: Click "Fullscreen →" text link (next to "Read More") to view full article content with auto-scrolling
-- **Smart Navigation**: Auto-snap to next/previous post when scroll velocity drops, smooth transitions between posts
-- **Boundary Indicators**: "You've reached the end" and "Beginning of content" messages with helpful scroll prompts
-- **Action Buttons**: Like, Save, and Share buttons available in both feed and fullscreen modes with persistent state
-- **Streak Tracking**: Real-time streak counter with flame icon display in header, increments on likes
+- **Fullscreen Icon Button**: Prominent floating button at bottom-right of cards with expand icon for quick fullscreen access
+- **Fullscreen Content Mode**: Click the fullscreen button or "Fullscreen →" text link to view full article content with snap-scroll navigation
+- **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping posts
+- **Red Like Button**: Heart icon turns vivid red when liked for instant visual feedback
+- **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Close) positioned at bottom of fullscreen for comfortable thumb reach
+- **Clean Boundaries**: Removed "beginning/end" messages for a minimalist interface
+- **Action Buttons**: Like, Save, and Share buttons available in both feed and fullscreen modes with persistent state across views
+- **Streak Tracking**: Real-time streak counter with flame icon display in header/footer, increments on likes
 - **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
+- **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
 
 ---
 
@@ -186,8 +190,15 @@ lg:     ≥ 1024px (laptops, desktops)
 - Three action buttons: Save, Like, Share
 - Layout: Horizontal flex with `gap-6 sm:gap-8`
 - Button style: Icon + label flex column
-- States: Fill icon when active, outline when inactive
-- Icon Set: BookmarkIcon (Save), Heart (Like), Share2 (Share)
+- States: Save/Share outline when inactive, **Like heart turns red** when liked
+- Icon Set: BookmarkIcon (Save), Heart (Like, red when active), Share2 (Share)
+
+**Floating Button** (Bottom-Right):
+- Fullscreen expand icon button with primary color background
+- Positioned absolutely at `bottom-8 right-4 sm:right-6`
+- Rounded corners with shadow for visual emphasis
+- Hover state: Slightly darker primary color
+- Icon: Maximize2 (24px, white/primary-foreground color)
 
 #### 3. **Expanded Modal** (`components/expanded-modal.tsx`)
 - **Backdrop**: `bg-background/95 backdrop-blur-sm`
@@ -202,20 +213,20 @@ lg:     ≥ 1024px (laptops, desktops)
 - Bullet lists within sections
 
 #### 4. **Fullscreen Content** (`components/fullscreen-content.tsx`)
-- **Trigger**: "Fullscreen →" text link on content cards (next to "Read More")
-- **Layout**: Full-screen snap-scroll presentation matching feed style
-- **Header**: Sticky bar with streak counter (left), action buttons (right: Save, Like, Share, Close X)
-- **Streak Display**: Shows current streak count in header left side with flame icon
+- **Trigger**: Floating fullscreen button at bottom-right of cards or "Fullscreen →" text link
+- **Layout**: Full-screen snap-scroll presentation matching feed style with content above, navbar below
+- **Bottom Navigation Bar**: Sticky bar with streak counter (left), action buttons (right: Save, Like, Share, Close X)
+- **Streak Display**: Shows current streak count in bottom bar left side with flame icon
 - **Navigation**: 
-  - Scroll down to next post (auto-snap when velocity drops near snap point)
-  - Scroll up to previous post (same auto-snap behavior)
+  - Scroll down to next post (auto-snap with improved velocity detection and debouncing)
+  - Scroll up to previous post (bidirectional snap-scroll)
   - Pressing ESC or clicking X button closes and returns to feed
+  - Minimum 500ms delay between auto-snaps prevents post skipping
 - **Content Area**: Full viewport height (h-screen) with centered max-width container (max-w-2xl)
 - **Expanded Text**: Full article content with expanded paragraphs, bullet lists, and generous spacing
-- **Indicators**: 
-  - "You've reached the end" message at last post with scroll-up prompt
-  - "Beginning of content" message at first post with scroll-down prompt
-- **State Sync**: Like/Save/Share states persist between feed and fullscreen views, updates reflect in both modes
+- **Clean Design**: Removed "beginning/end" boundary messages for minimalist interface
+- **Like Button Styling**: Heart icon is **red** when liked, matches card styling
+- **State Sync**: Like/Save/Share states persist between feed and fullscreen views, updates reflect in both modes immediately
 
 #### 5. **Theme Provider** (`components/theme-provider.tsx`)
 - Wraps application with `next-themes` library
@@ -493,19 +504,89 @@ To recreate this exact UI design on any system:
 
 ---
 
-## 🐛 Fixed Issues
+## 🐛 Fixed Issues & Improvements
 
-- **Hydration Mismatch**: Added `suppressHydrationWarning={true}` to both `<html>` and `<body>` tags to resolve server/client rendering conflicts with theme provider applying dark/light mode classes
-- **Scrollbar Visibility on All Browsers**: Applied aggressive CSS rules to `html`, `body`, and `div` elements with `!important` flags to hide scrollbars in Chrome, Firefox, Safari, Edge while maintaining full scroll functionality
-- **Text Selection**: Added theme-aware text selection styling with `::selection` and `::-moz-selection` pseudo-elements matching primary color
-- **Border Visibility**: Removed unnecessary `border-border` class from base element styles for seamless, clean aesthetic
-- **Fullscreen Navigation**: Implemented snap-scroll with auto-snapping to next/previous post when velocity drops, boundary indicators at start/end
-- **Fullscreen Button Positioning**: Repositioned from bottom action bar to top text links ("Read More →" and "Fullscreen →") matching "Read More" interaction pattern
-- **Action Buttons in Fullscreen**: Save, Like, Share buttons with persistent state in sticky header (right side), Streak counter in header (left side)
-- **State Persistence**: Like/Save states sync seamlessly between feed view and fullscreen view, updates reflect in both modes immediately
-- **Keyboard Navigation**: ESC key closes fullscreen and returns to feed; keyboard event properly bound with dependency array
+- **Hydration Mismatch**: Added `suppressHydrationWarning` to both `<html>` and `<body>` tags to resolve server/client rendering conflicts
+- **Scrollbar Visibility**: Applied aggressive CSS rules to hide scrollbars across all browsers while maintaining full scroll functionality
+- **Text Selection**: Added theme-aware text selection with `::selection` matching primary color
+- **Auto-Scroll Skipping Posts**: Fixed with improved velocity detection (threshold: `< 8px`), debouncing (500ms minimum delay), and bidirectional snap logic to prevent overshooting
+- **Red Like Button**: Heart icon now turns vivid red (`fill-red-500 text-red-500`) when liked in both feed and fullscreen modes
+- **Fullscreen Button Position**: Added floating button at bottom-right of cards for prominent, accessible placement with primary color styling
+- **Bottom Navigation in Fullscreen**: Moved action buttons from top to bottom for better ergonomics and thumb-friendly interface
+- **Clean Boundaries**: Removed "beginning/end" messages for minimalist design while maintaining smooth navigation
+- **State Persistence**: Like/Save states sync seamlessly between feed and fullscreen views with real-time updates
+- **Extended Test Data**: Added 8 articles (was 4) covering diverse topics: psychology, neuroscience, philosophy, technology, ecology, economics
+- **Keyboard Navigation**: ESC key properly closes fullscreen; keyboard events bound with correct dependency arrays
 
 ---
+
+## 💡 Additional Feature Ideas
+
+Here are some powerful features that could enhance this application further:
+
+### 1. **Reading Progress Indicator**
+- Visual progress bar showing position within article (top or side)
+- Estimated reading time for each article
+- Completion tracking across all articles
+- Benefits: Better UX, helps users understand commitment
+
+### 2. **Bookmarks & Collections**
+- Save articles to custom collections (e.g., "To Read Later", "Favorites")
+- Quick access to saved articles in separate view
+- Sync across devices if backend implemented
+- Benefits: Content organization, content discovery
+
+### 3. **Search & Filter**
+- Search by headline, category, or content keywords
+- Filter by category, date, or status (saved, liked)
+- Sort by trending, newest, most liked
+- Benefits: Content discoverability, personalization
+
+### 4. **User Preferences & Recommendations**
+- Track reading habits and engagement
+- Recommend articles based on reading history
+- Category preferences and topic interests
+- Dark/light mode, font size adjustments
+- Benefits: Personalization, engagement, retention
+
+### 5. **Social Sharing & Collaboration**
+- Share articles with friends via link or native share
+- Comment or annotate on articles
+- See how many people saved/liked each article
+- Benefits: Community building, social features
+
+### 6. **Analytics Dashboard**
+- Track reading statistics (articles read, time spent, favorites)
+- Visualize reading patterns and trends
+- Achievement badges and milestones
+- Benefits: User engagement, gamification
+
+### 7. **Offline Reading**
+- Download articles for offline access
+- Sync when connection restored
+- Background sync with service workers
+- Benefits: Accessibility, better UX
+
+### 8. **Text-to-Speech**
+- Listen to articles while doing other activities
+- Adjustable playback speed
+- Voice selection options
+- Benefits: Accessibility, content consumption alternatives
+
+### 9. **Advanced Animations**
+- Parallax effects on scroll
+- Animated transitions between articles
+- Loading state animations
+- Benefits: Polish, visual appeal
+
+### 10. **Backend Integration**
+- User authentication (sign up, login)
+- Persistent data storage (database)
+- Cloud synchronization across devices
+- API for article management
+- Benefits: Multi-device support, data persistence
+
+Each feature can be implemented incrementally without disrupting the current experience. Start with the features that align best with your user base and product goals.
 
 ## 🎯 Reproduction Checklist
 
@@ -522,7 +603,17 @@ When recreating this design:
 9. **Snap Points**: Use mandatory snap-scroll for smooth full-page navigation
 10. **Theme Colors**: Apply oklch values for perfect color consistency
 
-**Last Updated**: March 11, 2026 (v2.0 - Fullscreen Mode)
+**Last Updated**: March 11, 2026 (v2.1 - Auto-Scroll Fix, UI Polish, Feature Expansion)
 **Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
 **Status**: Production Ready ✓
-**Features**: Feed Scrolling • Fullscreen Viewing • Smart Navigation • Theme Aware Selection • Borderless Design • Streak Tracking
+**Features**: Feed Scrolling • Fullscreen Viewing • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Floating Expand Button • Theme Aware Selection • Borderless Design • Streak Tracking
+
+### v2.1 Changes
+- Fixed auto-scroll skipping posts with improved velocity detection and debouncing
+- Changed like button to red color for stronger visual feedback
+- Added floating fullscreen button at bottom-right corner of cards
+- Moved navigation bar to bottom of fullscreen for better ergonomics
+- Removed "beginning/end" boundary messages for cleaner design
+- Expanded test data from 4 to 8 diverse articles
+- Improved fullscreen snap-scroll with bidirectional navigation
+- Enhanced README with 10 feature ideas for future expansion
