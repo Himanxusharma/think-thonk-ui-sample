@@ -221,7 +221,13 @@ export default function FullscreenContent({
 
             {/* Share Button */}
             <button
-              onClick={() => onShare(content[currentIndex].id)}
+              onClick={() => {
+                try {
+                  onShare(content[currentIndex].id)
+                } catch (err) {
+                  console.error('Share error:', err)
+                }
+              }}
               className="flex items-center gap-1 group p-2"
               aria-label="Share article"
             >

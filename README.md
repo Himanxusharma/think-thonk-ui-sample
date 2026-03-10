@@ -6,16 +6,16 @@ A modern, minimalist content discovery feed with smooth full-page scrolling and 
 - **Scrollbar-Free Design**: Fully hidden scrollbars across all browsers using aggressive CSS rules for Chrome, Firefox, Safari, and Edge
 - **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
 - **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
-- **Fullscreen Icon Button**: Prominent floating button at bottom-right of cards with expand icon for quick fullscreen access
-- **Fullscreen Content Mode**: Click the fullscreen button or "Fullscreen →" text link to view full article content with snap-scroll navigation
+- **Focus Mode**: Subtle text link to enter full-screen article view with snap-scroll navigation between posts
 - **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping posts
 - **Red Like Button**: Heart icon turns vivid red when liked for instant visual feedback
-- **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Close) positioned at bottom of fullscreen for comfortable thumb reach
+- **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Close) positioned at bottom of focus mode for comfortable thumb reach
 - **Clean Boundaries**: Removed "beginning/end" messages for a minimalist interface
-- **Action Buttons**: Like, Save, and Share buttons available in both feed and fullscreen modes with persistent state across views
+- **Action Buttons**: Like, Save, and Share buttons available in both feed and focus mode with persistent state across views
 - **Streak Tracking**: Real-time streak counter with flame icon display in header/footer, increments on likes
 - **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
 - **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
+- **Graceful Share Handling**: Error handling for share API when permissions are denied
 
 ---
 
@@ -184,7 +184,7 @@ lg:     ≥ 1024px (laptops, desktops)
 - Category badge: Uppercase, muted foreground
 - Headline: Bold, responsive scaling
 - Preview text: Clamped to 4 lines (`line-clamp-4`)
-- Action Links: "Read More →" and "Fullscreen →" side by side, underlined text links with hover state
+- Action Links: "Read More" and "Focus Mode" side by side, subtle text links with hover state (70% opacity, hover to full)
 
 **Bottom Section** (Actions):
 - Three action buttons: Save, Like, Share
@@ -192,13 +192,6 @@ lg:     ≥ 1024px (laptops, desktops)
 - Button style: Icon + label flex column
 - States: Save/Share outline when inactive, **Like heart turns red** when liked
 - Icon Set: BookmarkIcon (Save), Heart (Like, red when active), Share2 (Share)
-
-**Floating Button** (Bottom-Right):
-- Fullscreen expand icon button with primary color background
-- Positioned absolutely at `bottom-8 right-4 sm:right-6`
-- Rounded corners with shadow for visual emphasis
-- Hover state: Slightly darker primary color
-- Icon: Maximize2 (24px, white/primary-foreground color)
 
 #### 3. **Expanded Modal** (`components/expanded-modal.tsx`)
 - **Backdrop**: `bg-background/95 backdrop-blur-sm`
@@ -212,8 +205,8 @@ lg:     ≥ 1024px (laptops, desktops)
 - Expanded content paragraphs with generous spacing
 - Bullet lists within sections
 
-#### 4. **Fullscreen Content** (`components/fullscreen-content.tsx`)
-- **Trigger**: Floating fullscreen button at bottom-right of cards or "Fullscreen →" text link
+#### 4. **Focus Mode** (`components/fullscreen-content.tsx`)
+- **Trigger**: "Focus Mode" text link on content cards (next to "Read More")
 - **Layout**: Full-screen snap-scroll presentation matching feed style with content above, navbar below
 - **Bottom Navigation Bar**: Sticky bar with streak counter (left), action buttons (right: Save, Like, Share, Close X)
 - **Streak Display**: Shows current streak count in bottom bar left side with flame icon
@@ -226,7 +219,8 @@ lg:     ≥ 1024px (laptops, desktops)
 - **Expanded Text**: Full article content with expanded paragraphs, bullet lists, and generous spacing
 - **Clean Design**: Removed "beginning/end" boundary messages for minimalist interface
 - **Like Button Styling**: Heart icon is **red** when liked, matches card styling
-- **State Sync**: Like/Save/Share states persist between feed and fullscreen views, updates reflect in both modes immediately
+- **Error Handling**: Share API errors handled gracefully when permissions are denied
+- **State Sync**: Like/Save/Share states persist between feed and focus mode views, updates reflect in both modes immediately
 
 #### 5. **Theme Provider** (`components/theme-provider.tsx`)
 - Wraps application with `next-themes` library
@@ -338,14 +332,15 @@ Scroll Up (velocity < -10px): Slides down with translate-y-0
 - **Backdrop**: Click outside doesn't close (no event listener)
 - **Content**: Displays full expanded article text with parsed sections and bullet lists
 
-### Fullscreen Mode Behavior
-- **Trigger**: "Fullscreen →" text link click
+### Focus Mode Behavior
+- **Trigger**: "Focus Mode" text link click
 - **Keyboard**: ESC key closes and returns to feed
 - **Body Lock**: `document.body.style.overflow = 'hidden'` when open
 - **Navigation**: Mandatory vertical snap-scroll between posts
-- **Auto-Scroll**: Automatically snaps to next/previous post when scroll velocity drops below threshold
-- **State Sync**: All action button states (Like, Save) reflected immediately in both feed and fullscreen
-- **Close Button**: X button in top-right of header returns to feed
+- **Auto-Scroll**: Automatically snaps to next/previous post when scroll velocity drops below threshold (with 500ms debounce)
+- **State Sync**: All action button states (Like, Save) reflected immediately in both feed and focus mode
+- **Share Handling**: Gracefully handles share API errors when permissions are denied
+- **Close Button**: X button in bottom-right of navigation bar returns to feed
 
 ---
 
@@ -433,9 +428,9 @@ All variables redefine in `.dark` class with appropriate oklch values:
 │   ├── page.tsx             # Main feed with content, scroll logic & fullscreen handler
 │   └── globals.css          # Global styles, design tokens, scrollbar hiding, text selection
 ├── components/
-│   ├── content-card.tsx     # Individual card component with Expand button
+│   ├── content-card.tsx     # Individual card component with Focus Mode link
 │   ├── expanded-modal.tsx   # Modal for "Read More" content view
-│   ├── fullscreen-content.tsx # Fullscreen post view with auto-scrolling & indicators
+│   ├── fullscreen-content.tsx # Focus mode post view with auto-scrolling
 │   ├── theme-provider.tsx   # Theme wrapper with next-themes
 │   └── ui/                  # Radix UI component library
 ├── public/                  # Static assets & icons
@@ -510,13 +505,16 @@ To recreate this exact UI design on any system:
 - **Scrollbar Visibility**: Applied aggressive CSS rules to hide scrollbars across all browsers while maintaining full scroll functionality
 - **Text Selection**: Added theme-aware text selection with `::selection` matching primary color
 - **Auto-Scroll Skipping Posts**: Fixed with improved velocity detection (threshold: `< 8px`), debouncing (500ms minimum delay), and bidirectional snap logic to prevent overshooting
-- **Red Like Button**: Heart icon now turns vivid red (`fill-red-500 text-red-500`) when liked in both feed and fullscreen modes
-- **Fullscreen Button Position**: Added floating button at bottom-right of cards for prominent, accessible placement with primary color styling
-- **Bottom Navigation in Fullscreen**: Moved action buttons from top to bottom for better ergonomics and thumb-friendly interface
-- **Clean Boundaries**: Removed "beginning/end" messages for minimalist design while maintaining smooth navigation
-- **State Persistence**: Like/Save states sync seamlessly between feed and fullscreen views with real-time updates
+- **Red Like Button**: Heart icon now turns vivid red (`fill-red-500 text-red-500`) when liked in both feed and focus mode
+- **Renamed "Fullscreen" to "Focus Mode"**: More intuitive naming for full-screen article viewing with subtle text links replacing loud button
+- **Removed Floating Button**: Eliminated prominent bottom-right button in favor of clean, minimal text link approach matching "Read More"
+- **Subtle Action Links**: Changed from underlined links to simple text with opacity (70% → 100% on hover) for minimal visual distraction
+- **Bottom Navigation in Focus Mode**: Action buttons positioned at bottom for better ergonomics and thumb-friendly interface
+- **Clean Boundaries**: Removed "beginning/end" boundary messages for minimalist design while maintaining smooth navigation
+- **Share Error Handling**: Added graceful handling for share API errors when browser permissions are denied
+- **State Persistence**: Like/Save states sync seamlessly between feed and focus mode views with real-time updates
 - **Extended Test Data**: Added 8 articles (was 4) covering diverse topics: psychology, neuroscience, philosophy, technology, ecology, economics
-- **Keyboard Navigation**: ESC key properly closes fullscreen; keyboard events bound with correct dependency arrays
+- **Keyboard Navigation**: ESC key properly closes focus mode; keyboard events bound with correct dependency arrays
 
 ---
 
@@ -592,28 +590,30 @@ Each feature can be implemented incrementally without disrupting the current exp
 
 When recreating this design:
 
-1. **Scrollbars**: Implement CSS rules for hidden scrollbars across all browsers
+1. **Scrollbars**: Implement CSS rules for hidden scrollbars across all browsers with !important flags
 2. **Borders**: Remove card borders (`border-border` class) for seamless aesthetic
 3. **Text Selection**: Style `::selection` with primary color and primary-foreground
-4. **Content Cards**: Include Save, Like, Share, and Expand buttons
-5. **Fullscreen Mode**: Create separate full-screen view with auto-scrolling navigation
-6. **Indicators**: Add "reached end" and "beginning" messages at boundaries
-7. **State Sync**: Ensure Like/Save states persist between views
-8. **Keyboard**: Implement ESC to close fullscreen
-9. **Snap Points**: Use mandatory snap-scroll for smooth full-page navigation
-10. **Theme Colors**: Apply oklch values for perfect color consistency
+4. **Content Cards**: Include Save, Like (red when active), and Share buttons with subtle action links
+5. **Focus Mode**: Create separate full-screen view with auto-scrolling navigation and bottom navigation bar
+6. **No Floating Button**: Remove any prominent buttons at card edges for clean design
+7. **Subtle Links**: Use text links with opacity (70%) instead of prominent underlined buttons
+8. **State Sync**: Ensure Like/Save states persist between feed and focus mode views
+9. **Error Handling**: Gracefully handle share API permission errors
+10. **Keyboard**: Implement ESC to close focus mode
+11. **Snap Points**: Use mandatory snap-scroll with debouncing to prevent post skipping
+12. **Theme Colors**: Apply oklch values for perfect color consistency across light/dark modes
 
-**Last Updated**: March 11, 2026 (v2.1 - Auto-Scroll Fix, UI Polish, Feature Expansion)
+**Last Updated**: March 11, 2026 (v2.2 - Focus Mode UI, Subtle Design, Error Handling)
 **Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
 **Status**: Production Ready ✓
-**Features**: Feed Scrolling • Fullscreen Viewing • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Floating Expand Button • Theme Aware Selection • Borderless Design • Streak Tracking
+**Features**: Feed Scrolling • Focus Mode • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Theme Aware Selection • Borderless Design • Streak Tracking • Error Handling
 
-### v2.1 Changes
-- Fixed auto-scroll skipping posts with improved velocity detection and debouncing
-- Changed like button to red color for stronger visual feedback
-- Added floating fullscreen button at bottom-right corner of cards
-- Moved navigation bar to bottom of fullscreen for better ergonomics
-- Removed "beginning/end" boundary messages for cleaner design
-- Expanded test data from 4 to 8 diverse articles
-- Improved fullscreen snap-scroll with bidirectional navigation
-- Enhanced README with 10 feature ideas for future expansion
+### v2.2 Changes
+- Renamed "Fullscreen" to "Focus Mode" for more intuitive terminology
+- Removed prominent floating button from cards for cleaner aesthetic
+- Changed action links from underlined buttons to subtle text links (70% opacity)
+- Improved link visibility with hover state transitioning to full opacity
+- Added graceful error handling for share API when permissions denied
+- Fixed hydration mismatch warnings in layout component
+- Enhanced README with comprehensive design documentation
+- All changes maintain minimalist, distraction-free design philosophy

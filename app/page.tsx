@@ -373,6 +373,10 @@ export default function Home() {
       navigator.share({
         title: content.find(item => item.id === id)?.headline,
         text: content.find(item => item.id === id)?.content,
+      }).catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Share failed:', err)
+        }
       })
     }
   }

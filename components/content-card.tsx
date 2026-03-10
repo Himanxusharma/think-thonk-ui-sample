@@ -1,6 +1,6 @@
 'use client'
 
-import { BookmarkIcon, Heart, Share2, Maximize2 } from 'lucide-react'
+import { BookmarkIcon, Heart, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface ContentItem {
@@ -54,19 +54,19 @@ export default function ContentCard({
             {item.content}
           </p>
 
-          {/* Read More and Expand Buttons */}
+          {/* Read More and Focus Mode Links */}
           <div className="flex items-center gap-6 mt-4">
             <button
               onClick={onReadMore}
-              className="text-xs sm:text-sm font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors w-fit"
+              className="text-xs sm:text-sm font-medium text-foreground/70 hover:text-foreground transition-colors w-fit"
             >
-              Read More →
+              Read More
             </button>
             <button
               onClick={onFullscreen}
-              className="text-xs sm:text-sm font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors w-fit"
+              className="text-xs sm:text-sm font-medium text-foreground/70 hover:text-foreground transition-colors w-fit"
             >
-              Fullscreen →
+              Focus Mode
             </button>
           </div>
         </div>
@@ -126,15 +126,6 @@ export default function ContentCard({
             </span>
           </button>
         </div>
-
-        {/* Fullscreen Button - Bottom Right */}
-        <button
-          onClick={onFullscreen}
-          className="absolute bottom-8 right-4 sm:right-6 p-3 rounded-lg bg-primary hover:bg-primary/90 transition-colors shadow-lg"
-          aria-label="Fullscreen view"
-        >
-          <Maximize2 size={24} className="text-primary-foreground" />
-        </button>
       </div>
     </div>
   )
