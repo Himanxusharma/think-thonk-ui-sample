@@ -1,6 +1,6 @@
 'use client'
 
-import { BookmarkIcon, Heart, Share2 } from 'lucide-react'
+import { BookmarkIcon, Heart, Share2, Maximize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface ContentItem {
@@ -54,21 +54,13 @@ export default function ContentCard({
             {item.content}
           </p>
 
-          {/* Read More and Focus Mode Links */}
-          <div className="flex items-center gap-6 mt-4">
-            <button
-              onClick={onReadMore}
-              className="text-xs sm:text-sm font-medium text-foreground/70 hover:text-foreground transition-colors w-fit"
-            >
-              Read More
-            </button>
-            <button
-              onClick={onFullscreen}
-              className="text-xs sm:text-sm font-medium text-foreground/70 hover:text-foreground transition-colors w-fit"
-            >
-              Focus Mode
-            </button>
-          </div>
+          {/* Read More Button */}
+          <button
+            onClick={onReadMore}
+            className="mt-2 text-xs sm:text-sm font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors w-fit"
+          >
+            Read More →
+          </button>
         </div>
 
         {/* Bottom Section - Action Buttons */}
@@ -123,6 +115,21 @@ export default function ContentCard({
             />
             <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
               Share
+            </span>
+          </button>
+
+          {/* Focus Mode Button */}
+          <button
+            onClick={onFullscreen}
+            className="flex flex-col items-center gap-1 group"
+            aria-label="Focus mode"
+          >
+            <Maximize2
+              size={24}
+              className="text-muted-foreground group-hover:text-foreground transition-colors"
+            />
+            <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+              Focus
             </span>
           </button>
         </div>

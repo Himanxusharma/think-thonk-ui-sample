@@ -6,12 +6,13 @@ A modern, minimalist content discovery feed with smooth full-page scrolling and 
 - **Scrollbar-Free Design**: Fully hidden scrollbars across all browsers using aggressive CSS rules for Chrome, Firefox, Safari, and Edge
 - **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
 - **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
-- **Focus Mode**: Subtle text link to enter full-screen article view with snap-scroll navigation between posts
+- **Read More Link**: Classic "Read More →" underlined link for expanded content view
+- **Focus Mode Button**: Icon button in action bar to enter full-screen article view with snap-scroll navigation
 - **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping posts
 - **Red Like Button**: Heart icon turns vivid red when liked for instant visual feedback
-- **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Close) positioned at bottom of focus mode for comfortable thumb reach
+- **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Focus, Close) positioned at bottom of focus mode for comfortable thumb reach
 - **Clean Boundaries**: Removed "beginning/end" messages for a minimalist interface
-- **Action Buttons**: Like, Save, and Share buttons available in both feed and focus mode with persistent state across views
+- **Persistent State**: Like and Save states sync seamlessly between feed and focus mode views
 - **Streak Tracking**: Real-time streak counter with flame icon display in header/footer, increments on likes
 - **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
 - **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
@@ -184,14 +185,14 @@ lg:     ≥ 1024px (laptops, desktops)
 - Category badge: Uppercase, muted foreground
 - Headline: Bold, responsive scaling
 - Preview text: Clamped to 4 lines (`line-clamp-4`)
-- Action Links: "Read More" and "Focus Mode" side by side, subtle text links with hover state (70% opacity, hover to full)
+- Read More Link: Underlined text link with arrow ("Read More →") for expanded modal view
 
 **Bottom Section** (Actions):
-- Three action buttons: Save, Like, Share
+- Four action buttons: Save, Like, Share, Focus
 - Layout: Horizontal flex with `gap-6 sm:gap-8`
 - Button style: Icon + label flex column
 - States: Save/Share outline when inactive, **Like heart turns red** when liked
-- Icon Set: BookmarkIcon (Save), Heart (Like, red when active), Share2 (Share)
+- Icon Set: BookmarkIcon (Save), Heart (Like, red when active), Share2 (Share), Maximize2 (Focus)
 
 #### 3. **Expanded Modal** (`components/expanded-modal.tsx`)
 - **Backdrop**: `bg-background/95 backdrop-blur-sm`
@@ -206,7 +207,7 @@ lg:     ≥ 1024px (laptops, desktops)
 - Bullet lists within sections
 
 #### 4. **Focus Mode** (`components/fullscreen-content.tsx`)
-- **Trigger**: "Focus Mode" text link on content cards (next to "Read More")
+- **Trigger**: Focus icon button (Maximize2) in action bar at bottom of content cards
 - **Layout**: Full-screen snap-scroll presentation matching feed style with content above, navbar below
 - **Bottom Navigation Bar**: Sticky bar with streak counter (left), action buttons (right: Save, Like, Share, Close X)
 - **Streak Display**: Shows current streak count in bottom bar left side with flame icon
@@ -333,7 +334,7 @@ Scroll Up (velocity < -10px): Slides down with translate-y-0
 - **Content**: Displays full expanded article text with parsed sections and bullet lists
 
 ### Focus Mode Behavior
-- **Trigger**: "Focus Mode" text link click
+- **Trigger**: Focus icon button click in card action bar
 - **Keyboard**: ESC key closes and returns to feed
 - **Body Lock**: `document.body.style.overflow = 'hidden'` when open
 - **Navigation**: Mandatory vertical snap-scroll between posts
@@ -506,9 +507,8 @@ To recreate this exact UI design on any system:
 - **Text Selection**: Added theme-aware text selection with `::selection` matching primary color
 - **Auto-Scroll Skipping Posts**: Fixed with improved velocity detection (threshold: `< 8px`), debouncing (500ms minimum delay), and bidirectional snap logic to prevent overshooting
 - **Red Like Button**: Heart icon now turns vivid red (`fill-red-500 text-red-500`) when liked in both feed and focus mode
-- **Renamed "Fullscreen" to "Focus Mode"**: More intuitive naming for full-screen article viewing with subtle text links replacing loud button
-- **Removed Floating Button**: Eliminated prominent bottom-right button in favor of clean, minimal text link approach matching "Read More"
-- **Subtle Action Links**: Changed from underlined links to simple text with opacity (70% → 100% on hover) for minimal visual distraction
+- **Read More Link Restored**: Classic "Read More →" underlined link for expanded modal view with original styling
+- **Focus Mode Button Position**: Moved from text link to icon button in action bar (bottom-left of Save/Like/Share buttons)
 - **Bottom Navigation in Focus Mode**: Action buttons positioned at bottom for better ergonomics and thumb-friendly interface
 - **Clean Boundaries**: Removed "beginning/end" boundary messages for minimalist design while maintaining smooth navigation
 - **Share Error Handling**: Added graceful handling for share API errors when browser permissions are denied
@@ -593,27 +593,25 @@ When recreating this design:
 1. **Scrollbars**: Implement CSS rules for hidden scrollbars across all browsers with !important flags
 2. **Borders**: Remove card borders (`border-border` class) for seamless aesthetic
 3. **Text Selection**: Style `::selection` with primary color and primary-foreground
-4. **Content Cards**: Include Save, Like (red when active), and Share buttons with subtle action links
-5. **Focus Mode**: Create separate full-screen view with auto-scrolling navigation and bottom navigation bar
-6. **No Floating Button**: Remove any prominent buttons at card edges for clean design
-7. **Subtle Links**: Use text links with opacity (70%) instead of prominent underlined buttons
+4. **Content Cards**: Include Save, Like (red when active), Share, and Focus buttons with "Read More →" link
+5. **Read More Link**: Underlined text link with arrow pointing right ("Read More →") for expanded modal
+6. **Focus Mode Button**: Icon button in action bar (Maximize2 icon) to enter full-screen reading
+7. **Focus Mode View**: Create separate full-screen view with auto-scrolling navigation and bottom navigation bar
 8. **State Sync**: Ensure Like/Save states persist between feed and focus mode views
 9. **Error Handling**: Gracefully handle share API permission errors
 10. **Keyboard**: Implement ESC to close focus mode
 11. **Snap Points**: Use mandatory snap-scroll with debouncing to prevent post skipping
 12. **Theme Colors**: Apply oklch values for perfect color consistency across light/dark modes
 
-**Last Updated**: March 11, 2026 (v2.2 - Focus Mode UI, Subtle Design, Error Handling)
+**Last Updated**: March 11, 2026 (v2.3 - Read More Link Restored, Focus Button in Action Bar)
 **Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
 **Status**: Production Ready ✓
-**Features**: Feed Scrolling • Focus Mode • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Theme Aware Selection • Borderless Design • Streak Tracking • Error Handling
+**Features**: Feed Scrolling • Read More Link • Focus Mode Button • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Theme Aware Selection • Borderless Design • Streak Tracking • Error Handling
 
-### v2.2 Changes
-- Renamed "Fullscreen" to "Focus Mode" for more intuitive terminology
-- Removed prominent floating button from cards for cleaner aesthetic
-- Changed action links from underlined buttons to subtle text links (70% opacity)
-- Improved link visibility with hover state transitioning to full opacity
-- Added graceful error handling for share API when permissions denied
-- Fixed hydration mismatch warnings in layout component
-- Enhanced README with comprehensive design documentation
-- All changes maintain minimalist, distraction-free design philosophy
+### v2.3 Changes
+- Restored "Read More →" classic underlined link with arrow (previous style)
+- Removed "Focus Mode" text link from top section
+- Added Focus Mode icon button (Maximize2) to action bar alongside Save/Like/Share buttons
+- Maintains clean, minimal interface with familiar interaction patterns
+- Focus Mode and Read More now have distinct visual hierarchy and positions
+- Enhanced README with updated component descriptions and interaction patterns
