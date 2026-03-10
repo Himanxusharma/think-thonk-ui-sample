@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useTheme } from 'next-themes'
 import { Moon, Sun, Flame } from 'lucide-react'
-import { useTheme } from '@/components/theme-provider'
 import ContentCard from '@/components/content-card'
 import ExpandedModal from '@/components/expanded-modal'
 
@@ -119,7 +119,7 @@ By understanding these mechanisms, students and professionals can implement evid
 ]
 
 export default function Home() {
-  const { theme, toggleTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [content, setContent] = useState<ContentItem[]>(SAMPLE_CONTENT)
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
@@ -224,7 +224,7 @@ export default function Home() {
 
           {/* Theme Toggle */}
           <button
-            onClick={toggleTheme}
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             className="p-2 rounded-lg hover:bg-muted transition-colors"
             aria-label="Toggle theme"
           >
