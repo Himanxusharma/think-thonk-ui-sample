@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ContentCard from '@/components/content-card'
 import ExpandedModal from '@/components/expanded-modal'
 
@@ -117,9 +117,14 @@ By understanding these mechanisms, students and professionals can implement evid
 ]
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false)
   const [content, setContent] = useState<ContentItem[]>(SAMPLE_CONTENT)
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSave = (id: number) => {
     setContent(content.map(item =>
@@ -147,15 +152,12 @@ export default function Home() {
     setIsModalOpen(true)
   }
 
+  if (!mounted) {
+    return null
+  }
+
   return (
     <main className="h-screen w-screen bg-background overflow-hidden flex flex-col">
-      {/* Category Header */}
-      <div className="h-16 flex items-center justify-center border-b border-border bg-background">
-        <p className="text-sm font-medium text-muted-foreground">
-          Select Category
-        </p>
-      </div>
-
       {/* Content Feed */}
       <div className="flex-1 overflow-y-scroll snap-y snap-mandatory">
         {content.map((item) => (
