@@ -1,6 +1,6 @@
 'use client'
 
-import { BookmarkIcon, Heart, Share2, Maximize2 } from 'lucide-react'
+import { BookmarkIcon, Heart, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface ContentItem {
@@ -8,6 +8,7 @@ interface ContentItem {
   category: string
   headline: string
   content: string
+  expandedContent?: string
   saved?: boolean
   liked?: boolean
   shared?: boolean
@@ -53,13 +54,21 @@ export default function ContentCard({
             {item.content}
           </p>
 
-          {/* Read More Button */}
-          <button
-            onClick={onReadMore}
-            className="mt-2 text-xs sm:text-sm font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors w-fit"
-          >
-            Read More →
-          </button>
+          {/* Read More and Expand Buttons */}
+          <div className="flex items-center gap-6 mt-4">
+            <button
+              onClick={onReadMore}
+              className="text-xs sm:text-sm font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors w-fit"
+            >
+              Read More →
+            </button>
+            <button
+              onClick={onFullscreen}
+              className="text-xs sm:text-sm font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors w-fit"
+            >
+              Fullscreen →
+            </button>
+          </div>
         </div>
 
         {/* Bottom Section - Action Buttons */}
@@ -114,21 +123,6 @@ export default function ContentCard({
             />
             <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
               Share
-            </span>
-          </button>
-
-          {/* Fullscreen Button */}
-          <button
-            onClick={onFullscreen}
-            className="flex flex-col items-center gap-1 group"
-            aria-label="Fullscreen view"
-          >
-            <Maximize2
-              size={24}
-              className="text-muted-foreground group-hover:text-foreground transition-colors"
-            />
-            <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-              Expand
             </span>
           </button>
         </div>

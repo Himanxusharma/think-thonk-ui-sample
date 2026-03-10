@@ -3,15 +3,15 @@
 A modern, minimalist content discovery feed with smooth full-page scrolling and fullscreen content viewing, built with Next.js 16, React 19, and Tailwind CSS 4. This is a professional design system documentation for perfect UI reproduction.
 
 ## Key Features
-- **Scrollbar-Free Design**: Clean feed with hidden scrollbars for distraction-free reading
-- **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically
+- **Scrollbar-Free Design**: Fully hidden scrollbars across all browsers using aggressive CSS rules for Chrome, Firefox, Safari, and Edge
+- **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
 - **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
-- **Fullscreen Content Mode**: Click "Expand" to view full article content with auto-scrolling between posts
-- **Smart Navigation**: Auto-snap to next/previous content with smooth scrolling
-- **Loading Indicators**: Visual cues at content boundaries (start/end)
-- **Action Buttons**: Like, Save, Share, and Expand buttons available in both feed and fullscreen modes
-- **Streak Tracking**: Real-time streak counter with flame icon display in header
-- **Dark/Light Theme**: Automatic theme switching with system preference detection
+- **Fullscreen Content Mode**: Click "Fullscreen →" text link (next to "Read More") to view full article content with auto-scrolling
+- **Smart Navigation**: Auto-snap to next/previous post when scroll velocity drops, smooth transitions between posts
+- **Boundary Indicators**: "You've reached the end" and "Beginning of content" messages with helpful scroll prompts
+- **Action Buttons**: Like, Save, and Share buttons available in both feed and fullscreen modes with persistent state
+- **Streak Tracking**: Real-time streak counter with flame icon display in header, increments on likes
+- **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
 
 ---
 
@@ -180,15 +180,14 @@ lg:     ≥ 1024px (laptops, desktops)
 - Category badge: Uppercase, muted foreground
 - Headline: Bold, responsive scaling
 - Preview text: Clamped to 4 lines (`line-clamp-4`)
-- "Read More" button: Underlined link with hover state
+- Action Links: "Read More →" and "Fullscreen →" side by side, underlined text links with hover state
 
 **Bottom Section** (Actions):
-- Four action buttons: Save, Like, Share, Expand
+- Three action buttons: Save, Like, Share
 - Layout: Horizontal flex with `gap-6 sm:gap-8`
 - Button style: Icon + label flex column
 - States: Fill icon when active, outline when inactive
-- **Expand Button**: Opens fullscreen content view with full article and auto-scrolling
-- Icon Set: BookmarkIcon (Save), Heart (Like), Share2 (Share), Maximize2 (Expand)
+- Icon Set: BookmarkIcon (Save), Heart (Like), Share2 (Share)
 
 #### 3. **Expanded Modal** (`components/expanded-modal.tsx`)
 - **Backdrop**: `bg-background/95 backdrop-blur-sm`
@@ -203,20 +202,20 @@ lg:     ≥ 1024px (laptops, desktops)
 - Bullet lists within sections
 
 #### 4. **Fullscreen Content** (`components/fullscreen-content.tsx`)
-- **Trigger**: "Expand" button on content cards
+- **Trigger**: "Fullscreen →" text link on content cards (next to "Read More")
 - **Layout**: Full-screen snap-scroll presentation matching feed style
-- **Header**: Sticky with action buttons (Save, Like, Share) + Close (X) button
-- **Streak Display**: Shows current streak count in header (left side)
+- **Header**: Sticky bar with streak counter (left), action buttons (right: Save, Like, Share, Close X)
+- **Streak Display**: Shows current streak count in header left side with flame icon
 - **Navigation**: 
-  - Scroll down to next post (auto-snap at scroll end)
-  - Scroll up to previous post
-  - Pressing ESC or clicking X button closes fullscreen
-- **Content Area**: Full viewport height with centered max-width container
+  - Scroll down to next post (auto-snap when velocity drops near snap point)
+  - Scroll up to previous post (same auto-snap behavior)
+  - Pressing ESC or clicking X button closes and returns to feed
+- **Content Area**: Full viewport height (h-screen) with centered max-width container (max-w-2xl)
+- **Expanded Text**: Full article content with expanded paragraphs, bullet lists, and generous spacing
 - **Indicators**: 
-  - "You've reached the end" message at last post
-  - "Beginning of content" message at first post
-  - Scroll prompts guide user navigation
-- **State Sync**: Like/Save/Share states persist between feed and fullscreen views
+  - "You've reached the end" message at last post with scroll-up prompt
+  - "Beginning of content" message at first post with scroll-down prompt
+- **State Sync**: Like/Save/Share states persist between feed and fullscreen views, updates reflect in both modes
 
 #### 5. **Theme Provider** (`components/theme-provider.tsx`)
 - Wraps application with `next-themes` library
@@ -286,11 +285,12 @@ All colors are defined as CSS variables in `:root` (light mode) and `.dark` (dar
 ## 🎬 Interaction Patterns
 
 ### Scrollbar Styling
-- **Hidden Scrollbars**: Maintained scrollability while hiding visual scrollbars
-- **WebKit Browsers**: `::-webkit-scrollbar { display: none; }`
+- **Hidden Scrollbars**: Complete scrollbar hiding across all browsers while maintaining full scroll functionality
+- **CSS Rules Applied To**: `html`, `body`, and all `div` elements
+- **WebKit Browsers** (Chrome, Safari, Edge): `::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }`
 - **Firefox**: `scrollbar-width: none;`
-- **Internet Explorer**: `-ms-overflow-style: none;`
-- **Applies To**: `html` element to hide main page scrollbar
+- **Internet Explorer/Edge Legacy**: `-ms-overflow-style: none;`
+- **Fallback**: Combined approach using both CSS properties and !important flags to override browser defaults
 
 ### Scroll Behavior
 - **Snap Type**: `snap-y snap-mandatory` (full-page vertical snapping)
@@ -320,11 +320,21 @@ Scroll Down (velocity > 10px): Slides up with -translate-y-full
 Scroll Up (velocity < -10px): Slides down with translate-y-0
 ```
 
-### Modal Behavior
+### Expanded Modal Behavior
 - **Trigger**: "Read More" button click
-- **Keyboard**: ESC key closes
+- **Keyboard**: ESC key closes and returns to feed
 - **Body Lock**: `document.body.style.overflow = 'hidden'` when open
 - **Backdrop**: Click outside doesn't close (no event listener)
+- **Content**: Displays full expanded article text with parsed sections and bullet lists
+
+### Fullscreen Mode Behavior
+- **Trigger**: "Fullscreen →" text link click
+- **Keyboard**: ESC key closes and returns to feed
+- **Body Lock**: `document.body.style.overflow = 'hidden'` when open
+- **Navigation**: Mandatory vertical snap-scroll between posts
+- **Auto-Scroll**: Automatically snaps to next/previous post when scroll velocity drops below threshold
+- **State Sync**: All action button states (Like, Save) reflected immediately in both feed and fullscreen
+- **Close Button**: X button in top-right of header returns to feed
 
 ---
 
@@ -485,14 +495,15 @@ To recreate this exact UI design on any system:
 
 ## 🐛 Fixed Issues
 
-- **Hydration Mismatch**: Added `suppressHydrationWarning={true}` to both `<html>` and `<body>` tags to resolve server/client rendering conflicts with the theme provider
-- **Scrollbar Visibility**: Hidden scrollbars on main feed using CSS (`::-webkit-scrollbar`, `scrollbar-width`, `-ms-overflow-style`)
-- **Text Selection**: Added theme-aware text selection styling with `::selection` pseudo-element
-- **Border Visibility**: Removed unnecessary borders from content cards for cleaner aesthetic (`border-border` class removed from base styles)
-- **Fullscreen Navigation**: Implemented auto-scrolling snap points in fullscreen mode with boundary indicators
-- **Action Buttons**: Added "Expand" button to content cards for fullscreen viewing
-- **State Persistence**: Ensured Like/Save/Share states sync between feed and fullscreen views
-- **Keyboard Navigation**: ESC key closes fullscreen mode; added keyboard event listeners
+- **Hydration Mismatch**: Added `suppressHydrationWarning={true}` to both `<html>` and `<body>` tags to resolve server/client rendering conflicts with theme provider applying dark/light mode classes
+- **Scrollbar Visibility on All Browsers**: Applied aggressive CSS rules to `html`, `body`, and `div` elements with `!important` flags to hide scrollbars in Chrome, Firefox, Safari, Edge while maintaining full scroll functionality
+- **Text Selection**: Added theme-aware text selection styling with `::selection` and `::-moz-selection` pseudo-elements matching primary color
+- **Border Visibility**: Removed unnecessary `border-border` class from base element styles for seamless, clean aesthetic
+- **Fullscreen Navigation**: Implemented snap-scroll with auto-snapping to next/previous post when velocity drops, boundary indicators at start/end
+- **Fullscreen Button Positioning**: Repositioned from bottom action bar to top text links ("Read More →" and "Fullscreen →") matching "Read More" interaction pattern
+- **Action Buttons in Fullscreen**: Save, Like, Share buttons with persistent state in sticky header (right side), Streak counter in header (left side)
+- **State Persistence**: Like/Save states sync seamlessly between feed view and fullscreen view, updates reflect in both modes immediately
+- **Keyboard Navigation**: ESC key closes fullscreen and returns to feed; keyboard event properly bound with dependency array
 
 ---
 

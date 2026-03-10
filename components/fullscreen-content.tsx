@@ -81,14 +81,14 @@ export default function FullscreenContent({
     return () => scrollContainer.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose()
-  }
-
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [onClose])
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">

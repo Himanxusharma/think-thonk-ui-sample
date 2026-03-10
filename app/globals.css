@@ -121,14 +121,18 @@
     @apply outline-ring/50;
   }
   
-  html {
+  html, body, div {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
   /* Hide scrollbars while keeping scroll functionality */
-  html::-webkit-scrollbar {
-    display: none;
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  div::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   body {
