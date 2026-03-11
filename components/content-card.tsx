@@ -1,6 +1,6 @@
 'use client'
 
-import { BookmarkIcon, Heart, Share2 } from 'lucide-react'
+import { BookmarkIcon, Heart, Share2, Maximize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface ContentItem {
@@ -8,6 +8,7 @@ interface ContentItem {
   category: string
   headline: string
   content: string
+  expandedContent?: string
   saved?: boolean
   liked?: boolean
   shared?: boolean
@@ -19,6 +20,7 @@ interface ContentCardProps {
   onSave: () => void
   onLike: () => void
   onShare: () => void
+  onFullscreen: () => void
 }
 
 export default function ContentCard({
@@ -27,11 +29,12 @@ export default function ContentCard({
   onSave,
   onLike,
   onShare,
+  onFullscreen,
 }: ContentCardProps) {
   return (
-    <div className="w-full h-full bg-background flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
+    <div className="w-full h-full bg-background flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 relative">
       {/* Container */}
-      <div className="w-full max-w-lg flex flex-col h-full justify-between">
+      <div className="w-full max-w-lg flex flex-col h-full justify-between relative">
         {/* Top Section - Content */}
         <div className="flex-1 flex flex-col justify-center gap-4 sm:gap-6">
           {/* Category Badge */}
@@ -91,7 +94,7 @@ export default function ContentCard({
               size={24}
               className={`transition-all ${
                 item.liked
-                  ? 'fill-foreground text-foreground'
+                  ? 'fill-red-500 text-red-500'
                   : 'text-muted-foreground group-hover:text-foreground'
               }`}
             />
@@ -112,6 +115,21 @@ export default function ContentCard({
             />
             <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
               Share
+            </span>
+          </button>
+
+          {/* Focus Mode Button */}
+          <button
+            onClick={onFullscreen}
+            className="flex flex-col items-center gap-1 group"
+            aria-label="Focus mode"
+          >
+            <Maximize2
+              size={24}
+              className="text-muted-foreground group-hover:text-foreground transition-colors"
+            />
+            <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+              Focus
             </span>
           </button>
         </div>

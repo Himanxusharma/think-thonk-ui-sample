@@ -5,6 +5,8 @@ import { useTheme } from 'next-themes'
 import { Moon, Sun, Flame } from 'lucide-react'
 import ContentCard from '@/components/content-card'
 import ExpandedModal from '@/components/expanded-modal'
+import FullscreenContent from '@/components/fullscreen-content'
+import ProfileMenu from '@/components/profile-menu'
 
 interface ContentItem {
   id: number
@@ -116,6 +118,182 @@ By understanding these mechanisms, students and professionals can implement evid
     liked: false,
     shared: false,
   },
+  {
+    id: 5,
+    category: 'Philosophy',
+    headline: 'The Nature of Consciousness',
+    content: 'Exploring the hard problem of consciousness and modern philosophical approaches. Scientists and philosophers debate whether consciousness can ever be fully understood. New perspectives challenge traditional views on the mind-body problem.',
+    expandedContent: `For centuries, philosophers and scientists have grappled with one of the deepest questions: what is consciousness? This inquiry, often called "the hard problem," remains one of the most perplexing challenges in philosophy and neuroscience.
+
+The hard problem of consciousness asks: why do we have subjective experiences at all? Why doesn't information processing happen "in the dark," without any subjective feeling?
+
+Current perspectives include:
+
+Physicalism:
+- Consciousness arises from physical brain processes
+- All mental phenomena are ultimately physical
+- Brain states correlate with conscious experiences
+
+Dualism:
+- Mind and body are fundamentally different substances
+- Consciousness is non-physical
+- Physical laws don't fully explain consciousness
+
+Panpsychism:
+- Consciousness is a fundamental feature of reality
+- All matter has some form of consciousness
+- Macroscopic consciousness emerges from basic particles
+
+New research directions:
+- Integrated Information Theory suggests consciousness relates to integrated information
+- Global Workspace Theory proposes consciousness emerges from information availability
+- Quantum theories explore potential quantum mechanisms in consciousness
+
+These debates continue to shape our understanding of human experience and reality itself.`,
+    saved: false,
+    liked: false,
+    shared: false,
+  },
+  {
+    id: 6,
+    category: 'Technology',
+    headline: 'The Future of AI Ethics',
+    content: 'Examining the ethical implications of artificial intelligence development. As AI becomes more powerful, the need for ethical frameworks grows. Organizations worldwide are developing guidelines for responsible AI deployment.',
+    expandedContent: `Artificial Intelligence stands at a critical juncture. As AI systems become increasingly capable and integrated into society, the imperative for robust ethical frameworks has never been greater.
+
+Key ethical challenges in AI development:
+
+Bias and Fairness:
+- AI systems inherit biases from training data
+- Discriminatory outcomes harm marginalized groups
+- Fairness metrics are difficult to define and measure
+- Transparency in algorithmic decision-making is crucial
+
+Privacy and Data Protection:
+- AI requires massive amounts of data
+- Personal information exposure risks increase
+- Regulations like GDPR attempt to protect users
+- Data ownership questions remain unresolved
+
+Accountability and Transparency:
+- "Black box" AI systems resist explanation
+- Responsibility for AI errors is unclear
+- Explainability research improves understanding
+- Stakeholder communication is essential
+
+Societal Impact:
+- Job displacement through automation
+- Power concentration in tech companies
+- Digital divide widens access gaps
+- Long-term societal transformation unknown
+
+Organizations worldwide are developing ethical guidelines and principles for responsible AI. The challenge lies not just in creating these frameworks, but in ensuring implementation and accountability.`,
+    saved: false,
+    liked: false,
+    shared: false,
+  },
+  {
+    id: 7,
+    category: 'Ecology',
+    headline: 'Biodiversity Crisis and Conservation',
+    content: 'Understanding the rapid decline of species worldwide and conservation efforts. Earth is experiencing its sixth mass extinction event. Innovative approaches offer hope for protecting endangered ecosystems.',
+    expandedContent: `Earth's biodiversity is declining at an alarming rate. Scientists have identified this period as the sixth mass extinction—the first caused entirely by one species: humans.
+
+The scale of the crisis:
+
+Species Loss:
+- One million species threatened with extinction
+- Extinction rates 100-1000 times faster than natural baseline
+- Forest loss accelerates species decline
+- Ocean acidification threatens marine ecosystems
+
+Primary causes:
+- Habitat destruction and land use change
+- Overexploitation of resources
+- Climate change and pollution
+- Invasive species disruption
+
+Conservation strategies showing promise:
+
+Protected Areas:
+- Marine and terrestrial reserves preserve habitat
+- Connectivity corridors enable species migration
+- Community-based conservation respects indigenous knowledge
+- International agreements strengthen protection
+
+Restoration Efforts:
+- Rewilding projects restore ecosystems
+- Species reintroduction programs show success
+- Habitat rehabilitation improves resilience
+- Technology aids monitoring and protection
+
+Innovation in conservation:
+- Environmental DNA tracking rare species
+- Artificial intelligence predicts extinction risk
+- Blockchain enables transparent conservation funding
+- Citizen science mobilizes public participation
+
+Success stories demonstrate that extinction is not inevitable. With sustained effort and innovation, we can slow biodiversity loss.`,
+    saved: false,
+    liked: false,
+    shared: false,
+  },
+  {
+    id: 8,
+    category: 'Economics',
+    headline: 'Universal Basic Income: The Global Experiment',
+    content: 'Exploring pilot programs testing universal basic income across different countries. Results challenge traditional economic assumptions about work and motivation. Could UBI be the solution to economic inequality?',
+    expandedContent: `Universal Basic Income (UBI) has transitioned from theoretical concept to practical experiment. Countries and cities worldwide are testing whether providing unconditional cash to all citizens improves wellbeing and economic outcomes.
+
+What is Universal Basic Income?
+
+A regular cash payment to all citizens, unconditional on employment or other factors. The amount aims to cover basic needs, providing economic security regardless of job status.
+
+Pilot programs worldwide:
+
+Finland (2017-2018):
+- 2,000 unemployed received €560/month
+- Improved wellbeing and reduced stress
+- No significant decrease in employment
+- Increased sense of security and autonomy
+
+Kenya (Ongoing):
+- GiveDirectly distributed monthly payments
+- Stimulated local economy and business creation
+- Recipients invested in education and health
+- Long-term social impacts being studied
+
+Stockton, California (Ongoing):
+- 125 residents received $500/month
+- Increased financial stability
+- More time for caregiving and education
+- Reduced financial anxiety and stress
+
+Key findings from experiments:
+
+Economic Effects:
+- No significant decrease in work hours overall
+- Recipients invest in education and skills
+- Local economies receive stimulus from spending
+- Entrepreneurship often increases
+
+Wellbeing Improvements:
+- Reduced stress and anxiety
+- Better mental and physical health
+- Increased social connection
+- Greater life satisfaction
+
+Challenges and questions:
+- Funding mechanisms at scale remain unclear
+- Inflation concerns when implemented broadly
+- Whether effects persist long-term
+- Global coordination complexities
+
+These experiments provide crucial data for policy decisions about economic futures.`,
+    saved: false,
+    liked: false,
+    shared: false,
+  },
 ]
 
 export default function Home() {
@@ -124,6 +302,8 @@ export default function Home() {
   const [content, setContent] = useState<ContentItem[]>(SAMPLE_CONTENT)
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [fullscreenIndex, setFullscreenIndex] = useState(0)
   const [showTopBar, setShowTopBar] = useState(true)
   const [streak, setStreak] = useState(7)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -189,18 +369,35 @@ export default function Home() {
     setStreak(prev => prev + 1)
   }
 
-  const handleShare = (id: number) => {
+  const handleShare = async (id: number) => {
     if (navigator.share) {
-      navigator.share({
-        title: content.find(item => item.id === id)?.headline,
-        text: content.find(item => item.id === id)?.content,
-      })
+      try {
+        await navigator.share({
+          title: content.find(item => item.id === id)?.headline,
+          text: content.find(item => item.id === id)?.content,
+        })
+      } catch (err: unknown) {
+        // Silently handle permission denied and other errors without logging
+        if (err instanceof Error && err.name === 'AbortError') {
+          // User cancelled share
+        }
+      }
     }
   }
 
   const handleReadMore = (item: ContentItem) => {
     setSelectedContent(item)
     setIsModalOpen(true)
+  }
+
+  const handleFullscreen = (item: ContentItem) => {
+    const index = content.findIndex(c => c.id === item.id)
+    setFullscreenIndex(index)
+    setIsFullscreen(true)
+  }
+
+  const handleCloseFullscreen = () => {
+    setIsFullscreen(false)
   }
 
   if (!mounted) {
@@ -222,18 +419,24 @@ export default function Home() {
             <span className="text-sm font-semibold">{streak}</span>
           </div>
 
-          {/* Theme Toggle */}
-          <button
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            className="p-2 rounded-lg hover:bg-muted transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === 'light' ? (
-              <Moon className="w-5 h-5" />
-            ) : (
-              <Sun className="w-5 h-5" />
-            )}
-          </button>
+          {/* Right Side Controls */}
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              className="p-2 rounded-lg hover:bg-muted transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? (
+                <Moon className="w-5 h-5" />
+              ) : (
+                <Sun className="w-5 h-5" />
+              )}
+            </button>
+
+            {/* Profile Menu */}
+            <ProfileMenu />
+          </div>
         </div>
       </div>
 
@@ -253,6 +456,7 @@ export default function Home() {
               onSave={() => handleSave(item.id)}
               onLike={() => handleLike(item.id)}
               onShare={() => handleShare(item.id)}
+              onFullscreen={() => handleFullscreen(item)}
             />
           </div>
         ))}
@@ -264,6 +468,19 @@ export default function Home() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           content={selectedContent}
+        />
+      )}
+
+      {/* Fullscreen Content */}
+      {isFullscreen && (
+        <FullscreenContent
+          content={content}
+          initialIndex={fullscreenIndex}
+          onClose={handleCloseFullscreen}
+          onSave={handleSave}
+          onLike={handleLike}
+          onShare={handleShare}
+          streak={streak}
         />
       )}
     </main>
