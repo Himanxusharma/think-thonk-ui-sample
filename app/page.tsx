@@ -6,6 +6,7 @@ import { Moon, Sun, Flame } from 'lucide-react'
 import ContentCard from '@/components/content-card'
 import ExpandedModal from '@/components/expanded-modal'
 import FullscreenContent from '@/components/fullscreen-content'
+import ProfileMenu from '@/components/profile-menu'
 
 interface ContentItem {
   id: number
@@ -368,16 +369,19 @@ export default function Home() {
     setStreak(prev => prev + 1)
   }
 
-  const handleShare = (id: number) => {
+  const handleShare = async (id: number) => {
     if (navigator.share) {
-      navigator.share({
-        title: content.find(item => item.id === id)?.headline,
-        text: content.find(item => item.id === id)?.content,
-      }).catch((err) => {
-        if (err.name !== 'AbortError') {
-          console.error('Share failed:', err)
+      try {
+        await navigator.share({
+          title: content.find(item => item.id === id)?.headline,
+          text: content.find(item => item.id === id)?.content,
+        })
+      } catch (err: unknown) {
+        // Silently handle permission denied and other errors without logging
+        if (err instanceof Error && err.name === 'AbortError') {
+          // User cancelled share
         }
-      })
+      }
     }
   }
 
@@ -415,18 +419,24 @@ export default function Home() {
             <span className="text-sm font-semibold">{streak}</span>
           </div>
 
-          {/* Theme Toggle */}
-          <button
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            className="p-2 rounded-lg hover:bg-muted transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === 'light' ? (
-              <Moon className="w-5 h-5" />
-            ) : (
-              <Sun className="w-5 h-5" />
-            )}
-          </button>
+          {/* Right Side Controls */}
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              className="p-2 rounded-lg hover:bg-muted transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? (
+                <Moon className="w-5 h-5" />
+              ) : (
+                <Sun className="w-5 h-5" />
+              )}
+            </button>
+
+            {/* Profile Menu */}
+            <ProfileMenu />
+          </div>
         </div>
       </div>
 

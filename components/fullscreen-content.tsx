@@ -46,6 +46,23 @@ export default function FullscreenContent({
     }
   }, [])
 
+  // Scroll to initial index on mount
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    // Use setTimeout to ensure the DOM is ready
+    setTimeout(() => {
+      const clientHeight = scrollContainer.clientHeight
+      const targetScroll = initialIndex * clientHeight
+      scrollContainer.scrollTo({
+        top: targetScroll,
+        behavior: 'auto',
+      })
+      setCurrentIndex(initialIndex)
+    }, 0)
+  }, [initialIndex])
+
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current
     if (!scrollContainer) return

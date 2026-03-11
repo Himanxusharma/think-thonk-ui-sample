@@ -3,20 +3,51 @@
 A modern, minimalist content discovery feed with smooth full-page scrolling and fullscreen content viewing, built with Next.js 16, React 19, and Tailwind CSS 4. This is a professional design system documentation for perfect UI reproduction.
 
 ## Key Features
+- **Fully Responsive Design**: Works seamlessly on mobile (320px), tablet (640px+), and desktop (1024px+) with adaptive layouts
 - **Scrollbar-Free Design**: Fully hidden scrollbars across all browsers using aggressive CSS rules for Chrome, Firefox, Safari, and Edge
 - **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
 - **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
 - **Read More Link**: Classic "Read More →" underlined link for expanded content view
-- **Focus Mode Button**: Icon button in action bar to enter full-screen article view with snap-scroll navigation
+- **Focus Mode Button**: Icon button in action bar to enter full-screen article view starting from the clicked card
 - **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping posts
 - **Red Like Button**: Heart icon turns vivid red when liked for instant visual feedback
 - **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Focus, Close) positioned at bottom of focus mode for comfortable thumb reach
 - **Clean Boundaries**: Removed "beginning/end" messages for a minimalist interface
 - **Persistent State**: Like and Save states sync seamlessly between feed and focus mode views
+- **Profile Menu**: Dropdown menu in top-right with Profile, Saved, Settings, and Logout options (foundation for future features)
 - **Streak Tracking**: Real-time streak counter with flame icon display in header/footer, increments on likes
 - **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
 - **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
-- **Graceful Share Handling**: Error handling for share API when permissions are denied
+- **Graceful Share Handling**: Silent error handling for share API permission denied without console errors
+
+---
+
+## 📱 Responsive Design
+
+The application is built with a **mobile-first** approach and scales beautifully across all device sizes.
+
+### Breakpoints & Layout
+| Device | Width | Layout Adjustments |
+|--------|-------|-------------------|
+| Mobile | 320-639px | Single column, condensed padding (px-4), smaller fonts (text-xs/sm) |
+| Small Tablet | 640-767px | Optimized spacing with sm: prefix, readable text sizes |
+| Tablet/Small Desktop | 768-1023px | Balanced spacing with md: prefix, comfortable content width |
+| Desktop | 1024px+ | Full width optimization with lg: prefix, generous padding |
+
+### Responsive Elements
+- **Navbar**: Adaptive height and padding scaling, profile menu on all screen sizes
+- **Content Cards**: Full viewport height (h-screen) maintained across all devices, responsive text scaling
+- **Action Buttons**: Consistent spacing (gap-6 sm:gap-8) that adjusts for screen size
+- **Focus Mode**: Full-screen view optimizes for viewing comfort on any device
+- **Typography**: Responsive font sizes: `sm:text-3xl` → `lg:text-5xl` for headlines, `text-xs sm:text-sm` for labels
+- **Touch Targets**: Minimum 44px height for buttons, adequate spacing on mobile for comfortable interaction
+
+### Mobile Optimization
+- Scrollbar hidden for cleaner interface on all devices
+- Touch-friendly action buttons with proper spacing
+- Navbar auto-hide on scroll for more content space
+- Theme toggle and profile menu accessible on small screens
+- Single-column layout prevents horizontal scrolling
 
 ---
 
@@ -223,7 +254,19 @@ lg:     ≥ 1024px (laptops, desktops)
 - **Error Handling**: Share API errors handled gracefully when permissions are denied
 - **State Sync**: Like/Save/Share states persist between feed and focus mode views, updates reflect in both modes immediately
 
-#### 5. **Theme Provider** (`components/theme-provider.tsx`)
+#### 5. **Profile Menu** (`components/profile-menu.tsx`)
+- **Trigger**: User icon button in top-right navbar
+- **Layout**: Vertical dropdown menu with icon + label items
+- **Menu Items**: 
+  - Profile (User icon) - Access profile page
+  - Saved (Bookmark icon) - View saved articles
+  - Settings (Settings icon) - Access settings page
+  - Logout (LogOut icon) - Sign out functionality
+- **Interactions**: Click outside to close, hover states for menu items
+- **Styling**: Card-colored background with border, smooth transitions
+- **Responsive**: Accessible on all screen sizes, proper touch spacing on mobile
+
+#### 6. **Theme Provider** (`components/theme-provider.tsx`)
 - Wraps application with `next-themes` library
 - Attributes: `class` (applies dark class to html element)
 - Default theme: `light`
@@ -506,12 +549,15 @@ To recreate this exact UI design on any system:
 - **Scrollbar Visibility**: Applied aggressive CSS rules to hide scrollbars across all browsers while maintaining full scroll functionality
 - **Text Selection**: Added theme-aware text selection with `::selection` matching primary color
 - **Auto-Scroll Skipping Posts**: Fixed with improved velocity detection (threshold: `< 8px`), debouncing (500ms minimum delay), and bidirectional snap logic to prevent overshooting
+- **Focus Mode Starting Position**: Fixed to scroll to the clicked card instead of first card using `useEffect` with initial index calculation
 - **Red Like Button**: Heart icon now turns vivid red (`fill-red-500 text-red-500`) when liked in both feed and focus mode
 - **Read More Link Restored**: Classic "Read More →" underlined link for expanded modal view with original styling
-- **Focus Mode Button Position**: Moved from text link to icon button in action bar (bottom-left of Save/Like/Share buttons)
+- **Focus Mode Button Position**: Icon button in action bar (alongside Save/Like/Share buttons)
 - **Bottom Navigation in Focus Mode**: Action buttons positioned at bottom for better ergonomics and thumb-friendly interface
 - **Clean Boundaries**: Removed "beginning/end" boundary messages for minimalist design while maintaining smooth navigation
-- **Share Error Handling**: Added graceful handling for share API errors when browser permissions are denied
+- **Share Error Handling**: Proper async/await with try-catch to silently handle share API permission denied errors
+- **Profile Menu Added**: Dropdown menu in navbar with Profile, Saved, Settings, Logout options (foundation for future features)
+- **Responsive Design**: Mobile-first approach with proper breakpoints (320px, 640px, 768px, 1024px) and adaptive layouts
 - **State Persistence**: Like/Save states sync seamlessly between feed and focus mode views with real-time updates
 - **Extended Test Data**: Added 8 articles (was 4) covering diverse topics: psychology, neuroscience, philosophy, technology, ecology, economics
 - **Keyboard Navigation**: ESC key properly closes focus mode; keyboard events bound with correct dependency arrays
@@ -603,15 +649,15 @@ When recreating this design:
 11. **Snap Points**: Use mandatory snap-scroll with debouncing to prevent post skipping
 12. **Theme Colors**: Apply oklch values for perfect color consistency across light/dark modes
 
-**Last Updated**: March 11, 2026 (v2.3 - Read More Link Restored, Focus Button in Action Bar)
+**Last Updated**: March 11, 2026 (v2.4 - Profile Menu, Focus Mode Fix, Responsive Design, Error Handling)
 **Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
 **Status**: Production Ready ✓
-**Features**: Feed Scrolling • Read More Link • Focus Mode Button • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Theme Aware Selection • Borderless Design • Streak Tracking • Error Handling
+**Features**: Responsive Design • Profile Menu • Read More Link • Focus Mode Button • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Theme Aware Selection • Borderless Design • Streak Tracking • Error Handling
 
-### v2.3 Changes
-- Restored "Read More →" classic underlined link with arrow (previous style)
-- Removed "Focus Mode" text link from top section
-- Added Focus Mode icon button (Maximize2) to action bar alongside Save/Like/Share buttons
-- Maintains clean, minimal interface with familiar interaction patterns
-- Focus Mode and Read More now have distinct visual hierarchy and positions
-- Enhanced README with updated component descriptions and interaction patterns
+### v2.4 Changes
+- **Profile Menu**: Added dropdown menu in navbar with Profile, Saved, Settings, Logout options
+- **Focus Mode Fix**: Fixed to start from clicked card instead of always first card using proper scroll initialization
+- **Responsive Design**: Fully responsive across mobile (320px), tablet (640px), and desktop (1024px+) with adaptive layouts
+- **Share Error Handling**: Improved with proper async/await and try-catch to silently handle permission denied errors
+- **Mobile Optimization**: Touch-friendly buttons, auto-hiding navbar on scroll, optimized spacing for all devices
+- **Comprehensive Documentation**: Added responsive design section and profile menu component details to README
