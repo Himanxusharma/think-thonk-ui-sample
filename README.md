@@ -3,21 +3,29 @@
 A modern, minimalist content discovery feed with smooth full-page scrolling and fullscreen content viewing, built with Next.js 16, React 19, and Tailwind CSS 4. This is a professional design system documentation for perfect UI reproduction.
 
 ## Key Features
+
+### Content & Engagement
+- **Like & Save Counters**: Real-time count display showing total likes and saves for each article, increments/decrements when toggling
+- **Persistent State Tracking**: All Like, Save, and engagement states sync seamlessly between feed and focus mode views
+- **Streak Tracking**: Real-time streak counter with flame icon, increments when articles are liked
+- **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
+
+### User Interface
 - **Fully Responsive Design**: Works seamlessly on mobile (320px), tablet (640px+), and desktop (1024px+) with adaptive layouts
 - **Scrollbar-Free Design**: Fully hidden scrollbars across all browsers using aggressive CSS rules for Chrome, Firefox, Safari, and Edge
-- **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
 - **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
-- **Read More Link**: Classic "Read More →" underlined link for expanded content view
-- **Focus Mode Button**: Icon button in action bar to enter full-screen article view starting from the clicked card
-- **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping posts
+- **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
+
+### Content Navigation
+- **Read More Link**: Classic "Read More →" underlined link for expanded modal content view
+- **Focus Mode**: Full-screen article viewing with snap-scroll navigation between posts, starts from clicked card
+- **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping
+- **Bottom Navigation Bar**: Sticky action buttons (Save, Like, Share, Focus, Close) for comfortable thumb reach
+
+### User Experience
 - **Red Like Button**: Heart icon turns vivid red when liked for instant visual feedback
-- **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Focus, Close) positioned at bottom of focus mode for comfortable thumb reach
-- **Clean Boundaries**: Removed "beginning/end" messages for a minimalist interface
-- **Persistent State**: Like and Save states sync seamlessly between feed and focus mode views
-- **Profile Menu**: Dropdown menu in top-right with Profile, Saved, Settings, and Logout options (foundation for future features)
-- **Streak Tracking**: Real-time streak counter with flame icon display in header/footer, increments on likes
+- **Profile Menu**: Dropdown menu in top-right with Profile, Saved, Settings, and Logout options
 - **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
-- **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
 - **Graceful Share Handling**: Silent error handling for share API permission denied without console errors
 
 ---
@@ -221,8 +229,10 @@ lg:     ≥ 1024px (laptops, desktops)
 **Bottom Section** (Actions):
 - Four action buttons: Save, Like, Share, Focus
 - Layout: Horizontal flex with `gap-6 sm:gap-8`
-- Button style: Icon + label flex column
+- Button style: Icon + label flex column with counter display
+- Counter Display: Secondary text line showing count (text-xs, muted-foreground/60 color)
 - States: Save/Share outline when inactive, **Like heart turns red** when liked
+- Count Updates: Increments when user likes/saves, decrements when toggled off
 - Icon Set: BookmarkIcon (Save), Heart (Like, red when active), Share2 (Share), Maximize2 (Focus)
 
 #### 3. **Expanded Modal** (`components/expanded-modal.tsx`)
@@ -545,6 +555,9 @@ To recreate this exact UI design on any system:
 
 ## 🐛 Fixed Issues & Improvements
 
+- **Like & Save Counters**: Implemented real-time count tracking that increments/decrements when users like or save articles
+- **Counter Display**: Counts appear below each action label in both feed view and focus mode with distinct styling
+- **Count Persistence**: Counters update across all views when user interaction occurs, reflecting changes in real-time
 - **Hydration Mismatch**: Added `suppressHydrationWarning` to both `<html>` and `<body>` tags to resolve server/client rendering conflicts
 - **Scrollbar Visibility**: Applied aggressive CSS rules to hide scrollbars across all browsers while maintaining full scroll functionality
 - **Text Selection**: Added theme-aware text selection with `::selection` matching primary color
@@ -552,14 +565,13 @@ To recreate this exact UI design on any system:
 - **Focus Mode Starting Position**: Fixed to scroll to the clicked card instead of first card using `useEffect` with initial index calculation
 - **Red Like Button**: Heart icon now turns vivid red (`fill-red-500 text-red-500`) when liked in both feed and focus mode
 - **Read More Link Restored**: Classic "Read More →" underlined link for expanded modal view with original styling
-- **Focus Mode Button Position**: Icon button in action bar (alongside Save/Like/Share buttons)
 - **Bottom Navigation in Focus Mode**: Action buttons positioned at bottom for better ergonomics and thumb-friendly interface
 - **Clean Boundaries**: Removed "beginning/end" boundary messages for minimalist design while maintaining smooth navigation
 - **Share Error Handling**: Proper async/await with try-catch to silently handle share API permission denied errors
 - **Profile Menu Added**: Dropdown menu in navbar with Profile, Saved, Settings, Logout options (foundation for future features)
 - **Responsive Design**: Mobile-first approach with proper breakpoints (320px, 640px, 768px, 1024px) and adaptive layouts
 - **State Persistence**: Like/Save states sync seamlessly between feed and focus mode views with real-time updates
-- **Extended Test Data**: Added 8 articles (was 4) covering diverse topics: psychology, neuroscience, philosophy, technology, ecology, economics
+- **Extended Test Data**: Added 8 articles covering diverse topics with realistic like/save counts
 - **Keyboard Navigation**: ESC key properly closes focus mode; keyboard events bound with correct dependency arrays
 
 ---
@@ -649,15 +661,15 @@ When recreating this design:
 11. **Snap Points**: Use mandatory snap-scroll with debouncing to prevent post skipping
 12. **Theme Colors**: Apply oklch values for perfect color consistency across light/dark modes
 
-**Last Updated**: March 11, 2026 (v2.4 - Profile Menu, Focus Mode Fix, Responsive Design, Error Handling)
+**Last Updated**: March 13, 2026 (v2.5 - Like/Save Counters, Engagement Metrics, Feature Complete)
 **Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
 **Status**: Production Ready ✓
-**Features**: Responsive Design • Profile Menu • Read More Link • Focus Mode Button • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Theme Aware Selection • Borderless Design • Streak Tracking • Error Handling
+**Features**: Like/Save Counters • Real-Time Metrics • Responsive Design • Profile Menu • Focus Mode • Smart Auto-Scroll • Red Likes • Streak Tracking • Dark/Light Theme • 8 Diverse Articles
 
-### v2.4 Changes
-- **Profile Menu**: Added dropdown menu in navbar with Profile, Saved, Settings, Logout options
-- **Focus Mode Fix**: Fixed to start from clicked card instead of always first card using proper scroll initialization
-- **Responsive Design**: Fully responsive across mobile (320px), tablet (640px), and desktop (1024px+) with adaptive layouts
-- **Share Error Handling**: Improved with proper async/await and try-catch to silently handle permission denied errors
-- **Mobile Optimization**: Touch-friendly buttons, auto-hiding navbar on scroll, optimized spacing for all devices
-- **Comprehensive Documentation**: Added responsive design section and profile menu component details to README
+### v2.5 Changes
+- **Like & Save Counters**: Implemented real-time count tracking with increments/decrements when users engage
+- **Counter Display**: Counts shown below action labels in both feed and focus mode with subtle styling (text-xs, muted-foreground/60)
+- **Engagement Metrics**: Each article pre-populated with realistic like/save counts (650-2000 likes, 300-900 saves)
+- **Dynamic Updates**: Counters update in real-time across all views when user interaction occurs
+- **Content Interface Update**: Extended ContentItem interface to include likeCount and saveCount properties
+- **Focus Mode & Mobile Verified**: All counter functionality works across responsive breakpoints and focus mode

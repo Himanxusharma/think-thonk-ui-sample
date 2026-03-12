@@ -17,6 +17,8 @@ interface ContentItem {
   saved?: boolean
   liked?: boolean
   shared?: boolean
+  likeCount: number
+  saveCount: number
 }
 
 const SAMPLE_CONTENT: ContentItem[] = [
@@ -39,6 +41,8 @@ The implications are far-reaching, suggesting that our ancient relationship with
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 1248,
+    saveCount: 542,
   },
   {
     id: 2,
@@ -59,6 +63,8 @@ This discovery has profound implications for treating neurological conditions li
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 892,
+    saveCount: 367,
   },
   {
     id: 3,
@@ -82,6 +88,8 @@ Understanding this paradox enables us to design better systems—both for oursel
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 1567,
+    saveCount: 823,
   },
   {
     id: 4,
@@ -117,6 +125,8 @@ By understanding these mechanisms, students and professionals can implement evid
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 654,
+    saveCount: 298,
   },
   {
     id: 5,
@@ -153,6 +163,8 @@ These debates continue to shape our understanding of human experience and realit
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 2034,
+    saveCount: 751,
   },
   {
     id: 6,
@@ -191,6 +203,8 @@ Organizations worldwide are developing ethical guidelines and principles for res
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 1456,
+    saveCount: 634,
   },
   {
     id: 7,
@@ -237,6 +251,8 @@ Success stories demonstrate that extinction is not inevitable. With sustained ef
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 1789,
+    saveCount: 892,
   },
   {
     id: 8,
@@ -293,6 +309,8 @@ These experiments provide crucial data for policy decisions about economic futur
     saved: false,
     liked: false,
     shared: false,
+    likeCount: 945,
+    saveCount: 421,
   },
 ]
 
@@ -356,17 +374,34 @@ export default function Home() {
   }, [])
 
   const handleSave = (id: number) => {
-    setContent(content.map(item =>
-      item.id === id ? { ...item, saved: !item.saved } : item
-    ))
+    setContent(
+      content.map(item =>
+        item.id === id 
+          ? { 
+              ...item, 
+              saved: !item.saved,
+              saveCount: item.saved ? item.saveCount - 1 : item.saveCount + 1
+            } 
+          : item,
+      ),
+    )
   }
 
   const handleLike = (id: number) => {
-    setContent(content.map(item =>
-      item.id === id ? { ...item, liked: !item.liked } : item
-    ))
-    // Increase streak when liking
-    setStreak(prev => prev + 1)
+    setContent(
+      content.map(item =>
+        item.id === id 
+          ? { 
+              ...item, 
+              liked: !item.liked,
+              likeCount: item.liked ? item.likeCount - 1 : item.likeCount + 1
+            } 
+          : item,
+      ),
+    )
+    if (content.find(item => item.id === id)?.liked === false) {
+      setStreak(streak + 1)
+    }
   }
 
   const handleShare = async (id: number) => {
