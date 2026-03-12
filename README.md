@@ -2,6 +2,20 @@
 
 A modern, minimalist content discovery feed with smooth full-page scrolling and fullscreen content viewing, built with Next.js 16, React 19, and Tailwind CSS 4. This is a professional design system documentation for perfect UI reproduction.
 
+**✨ Flutter-Friendly Architecture**: This codebase is architected in layers specifically designed for easy migration to Flutter. See [FLUTTER_MIGRATION_GUIDE.md](./FLUTTER_MIGRATION_GUIDE.md) and [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
+
+## 📋 Table of Contents
+
+1. [Key Features](#key-features)
+2. [Responsive Design](#-responsive-design)
+3. [Design System](#-design-system)
+4. [Component Architecture](#-component-architecture)
+5. [Flutter Migration](#-flutter-friendly-migration)
+6. [Fixed Issues](#-fixed-issues--improvements)
+7. [Reproduction Checklist](#-reproduction-checklist)
+8. [Setup & Installation](#-setup--installation)
+9. [Changelog](#changelog)
+
 ## Key Features
 
 ### Content & Engagement
@@ -553,6 +567,48 @@ To recreate this exact UI design on any system:
 
 ---
 
+## 🚀 Flutter-Friendly Migration
+
+This project is structured for easy conversion to Flutter. All business logic and data models are separated from UI.
+
+### Architecture for Cross-Platform
+
+**Layers** (organized in `lib/` directory):
+
+| Layer | Files | Purpose | Flutter Equivalent |
+|-------|-------|---------|-------------------|
+| **Constants** | `lib/constants/app_constants.ts` | Design tokens, colors, spacing | `lib/constants/app_constants.dart` |
+| **Models** | `lib/models/content_model.ts` | Data structures, interfaces | Freezed classes with `@freezed` |
+| **Services** | `lib/services/content_service.ts` | Business logic, pure functions | Dart service classes |
+| **Repository** | `lib/repositories/content_repository.ts` | Data access layer | Riverpod providers |
+| **Utils** | `lib/utils/helpers.ts` | Helper functions | Dart utility functions |
+| **UI** | `app/page.tsx`, `components/*.tsx` | React components | Flutter Widgets |
+
+### Key Benefits for Flutter Migration
+
+1. **Separated Layers**: UI code doesn't depend on business logic
+2. **Pure Functions**: Services use pure functions with no side effects
+3. **Type-Safe Models**: All data interfaces defined in `lib/models/`
+4. **Centralized Constants**: All design tokens in `lib/constants/`
+5. **Utility Functions**: Reusable helpers that work across platforms
+
+### Migration Checklist
+
+- [ ] Phase 1: Set up Flutter project structure
+- [ ] Phase 2: Migrate constants and models (no UI)
+- [ ] Phase 3: Migrate services and repositories
+- [ ] Phase 4: Create Flutter UI widgets
+- [ ] Phase 5: Integrate state management (Riverpod)
+- [ ] Phase 6: Test and optimize
+
+### Resources
+
+- **[FLUTTER_MIGRATION_GUIDE.md](./FLUTTER_MIGRATION_GUIDE.md)** - Complete step-by-step migration guide
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Detailed architecture documentation
+- **Estimated time**: 3-4 weeks for production-ready Flutter app
+
+---
+
 ## 🐛 Fixed Issues & Improvements
 
 - **Like & Save Counters**: Implemented real-time count tracking that increments/decrements when users like or save articles
@@ -661,15 +717,84 @@ When recreating this design:
 11. **Snap Points**: Use mandatory snap-scroll with debouncing to prevent post skipping
 12. **Theme Colors**: Apply oklch values for perfect color consistency across light/dark modes
 
-**Last Updated**: March 13, 2026 (v2.5 - Like/Save Counters, Engagement Metrics, Feature Complete)
-**Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
-**Status**: Production Ready ✓
-**Features**: Like/Save Counters • Real-Time Metrics • Responsive Design • Profile Menu • Focus Mode • Smart Auto-Scroll • Red Likes • Streak Tracking • Dark/Light Theme • 8 Diverse Articles
+## 🛠 Setup & Installation
 
-### v2.5 Changes
-- **Like & Save Counters**: Implemented real-time count tracking with increments/decrements when users engage
-- **Counter Display**: Counts shown below action labels in both feed and focus mode with subtle styling (text-xs, muted-foreground/60)
-- **Engagement Metrics**: Each article pre-populated with realistic like/save counts (650-2000 likes, 300-900 saves)
-- **Dynamic Updates**: Counters update in real-time across all views when user interaction occurs
-- **Content Interface Update**: Extended ContentItem interface to include likeCount and saveCount properties
-- **Focus Mode & Mobile Verified**: All counter functionality works across responsive breakpoints and focus mode
+### Prerequisites
+
+- Node.js 18+ (for Next.js 16)
+- npm, yarn, pnpm, or bun
+
+### Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/Himanxusharma/think-thonk-ui-sample.git
+
+# Install dependencies
+npm install
+# or
+pnpm install
+# or
+yarn install
+# or
+bun install
+
+# Run development server
+npm run dev
+# or
+pnpm dev
+# or
+yarn dev
+# or
+bun dev
+
+# Open http://localhost:3000 in your browser
+```
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+### Project Structure
+
+```
+lib/
+├── constants/       # Design tokens (Flutter: dart constants)
+├── models/         # Data interfaces (Flutter: Dart classes + freezed)
+├── services/       # Business logic (Flutter: Dart services)
+├── repositories/   # Data access (Flutter: Riverpod providers)
+└── utils/          # Helpers (Flutter: Dart utilities)
+
+app/
+├── layout.tsx      # Root layout
+└── page.tsx        # Main content page
+
+components/
+├── content-card.tsx
+├── expanded-modal.tsx
+├── fullscreen-content.tsx
+├── profile-menu.tsx
+└── theme-provider.tsx
+```
+
+---
+
+## 📊 Changelog
+
+**Last Updated**: March 13, 2026 (v2.6 - Flutter-Friendly Architecture, Complete Documentation)
+**Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
+**Status**: Production Ready ✓ | Flutter-Friendly ✓
+**Features**: Like/Save Counters • Real-Time Metrics • Responsive Design • Profile Menu • Focus Mode • Smart Auto-Scroll • Red Likes • Streak Tracking • Dark/Light Theme • Flutter-Ready Architecture • 8 Diverse Articles
+
+### v2.6 Changes - Flutter-Friendly Architecture
+- **Created `lib/constants/app_constants.ts`**: All design tokens, colors, typography, spacing centralized (Flutter: `app_constants.dart`)
+- **Created `lib/models/content_model.ts`**: Type-safe data interfaces and enums (Flutter: Freezed Dart classes)
+- **Created `lib/services/content_service.ts`**: Pure business logic layer with static methods (Flutter: Dart services)
+- **Created `lib/repositories/content_repository.ts`**: Data access abstraction layer (Flutter: Riverpod providers)
+- **Created `lib/utils/helpers.ts`**: Reusable utility functions (Flutter: Direct Dart port)
+- **Added FLUTTER_MIGRATION_GUIDE.md**: Complete step-by-step migration guide (393 lines)
+- **Added ARCHITECTURE.md**: Comprehensive architecture documentation (385 lines)
+- **Layer-Based Design**: UI completely separated from business logic for easy cross-platform migration
