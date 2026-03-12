@@ -18,11 +18,24 @@ A modern, minimalist content discovery feed with smooth full-page scrolling and 
 
 ## Key Features
 
+### Authentication
+- **Login Page**: Clean, modern login interface with email and password fields
+- **Register Page**: Sign-up form with name, email, and password validation
+- **Test Credentials**: Demo account for immediate testing (demo@thinkthonk.com / Demo123!@#)
+- **Session Management**: Persistent login state with redirect after authentication
+- **Password Visibility Toggle**: Show/hide password option with eye icon
+
 ### Content & Engagement
 - **Like & Save Counters**: Real-time count display showing total likes and saves for each article, increments/decrements when toggling
 - **Persistent State Tracking**: All Like, Save, and engagement states sync seamlessly between feed and focus mode views
 - **Streak Tracking**: Real-time streak counter with flame icon, increments when articles are liked
 - **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
+
+### User Profiles & Account
+- **Profile Page**: Complete user profile with editable bio, location, join date, and statistics
+- **Saved Articles**: Dedicated page to view and manage saved articles with search functionality
+- **Settings Page**: Theme control (Light/Dark/System), notification preferences, privacy controls, and data management
+- **Profile Menu**: Enhanced dropdown with navigation icons, hover effects, and smooth transitions
 
 ### User Interface
 - **Fully Responsive Design**: Works seamlessly on mobile (320px), tablet (640px+), and desktop (1024px+) with adaptive layouts
@@ -38,9 +51,46 @@ A modern, minimalist content discovery feed with smooth full-page scrolling and 
 
 ### User Experience
 - **Red Like Button**: Heart icon turns vivid red when liked for instant visual feedback
-- **Profile Menu**: Dropdown menu in top-right with Profile, Saved, Settings, and Logout options
 - **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
 - **Graceful Share Handling**: Silent error handling for share API permission denied without console errors
+
+---
+
+## 📄 Application Pages
+
+### `/` - Feed Home
+- Main content feed with article cards
+- Like/Save/Share functionality with real-time counters
+- Focus mode button for full-screen reading
+- Streak tracking in navbar
+
+### `/auth` - Authentication
+- **Login Mode**: Email and password login with test credentials
+- **Register Mode**: Create new account with name field
+- Toggle between login and register modes
+- Shows success/error messages
+- Redirects to home after successful login
+
+### `/profile` - User Profile
+- View and edit user profile information
+- Display user stats (likes, saves, current streak)
+- Edit mode for name, bio, and location
+- Avatar with user initials
+- Responsive profile card layout
+
+### `/saved` - Saved Articles
+- Browse all saved articles with category badges
+- Search functionality to filter saved items
+- Remove articles from saved list
+- Shows save date for each article
+- Empty state when no articles are saved
+
+### `/settings` - Settings & Preferences
+- **Appearance**: Theme selection (Light/Dark/System)
+- **Notifications**: Toggle push notifications and email digest
+- **Privacy**: Control profile visibility and activity status
+- **Data**: Download data and delete account options
+- **About**: App version, build number, and last updated date
 
 ---
 
@@ -278,17 +328,34 @@ lg:     ≥ 1024px (laptops, desktops)
 - **Error Handling**: Share API errors handled gracefully when permissions are denied
 - **State Sync**: Like/Save/Share states persist between feed and focus mode views, updates reflect in both modes immediately
 
-#### 5. **Profile Menu** (`components/profile-menu.tsx`)
-- **Trigger**: User icon button in top-right navbar
-- **Layout**: Vertical dropdown menu with icon + label items
-- **Menu Items**: 
-  - Profile (User icon) - Access profile page
-  - Saved (Bookmark icon) - View saved articles
-  - Settings (Settings icon) - Access settings page
-  - Logout (LogOut icon) - Sign out functionality
-- **Interactions**: Click outside to close, hover states for menu items
-- **Styling**: Card-colored background with border, smooth transitions
-- **Responsive**: Accessible on all screen sizes, proper touch spacing on mobile
+#### 5. **Authentication Page** (`app/auth/page.tsx`)
+- **Layout**: Centered card layout with maximum 448px width
+- **Header**: Logo (TT initials), title, and subtitle
+- **Form Fields**:
+  - Name field (register only) with User icon
+  - Email field with Mail icon
+  - Password field with Lock icon and show/hide toggle
+- **Form States**:
+  - Login mode: Email + password fields
+  - Register mode: Name + email + password fields
+- **Validation**: Real-time error and success messages
+- **Test Credentials**: Displayed in info box (demo@thinkthonk.com / Demo123!@#)
+- **Authentication Toggle**: Switch between login and register modes
+- **Redirect**: Routes to home page on successful authentication
+
+#### 6. **Profile Menu** (`components/profile-menu.tsx`)
+- **Trigger**: User icon button in top-right navbar with hover effect
+- **Layout**: Dropdown menu with header, menu items, divider, and logout button
+- **Menu Items** (with navigation):
+  - Profile (User icon) - Navigate to `/profile`
+  - Saved Articles (Bookmark icon) - Navigate to `/saved`
+  - Settings (Settings icon) - Navigate to `/settings`
+- **Header**: "Account" label with muted styling
+- **Interactions**: Click outside to close, click item to navigate and close menu
+- **Hover Effects**: Icon color change to primary, chevron icon appears on hover
+- **Logout**: Separate button with red styling, redirects to `/auth`
+- **Animations**: Smooth fade-in and slide-down transitions
+- **Responsive**: Proper spacing and touch targets on all screen sizes
 
 #### 6. **Theme Provider** (`components/theme-provider.tsx`)
 - Wraps application with `next-themes` library
@@ -769,15 +836,23 @@ lib/
 └── utils/          # Helpers (Flutter: Dart utilities)
 
 app/
-├── layout.tsx      # Root layout
-└── page.tsx        # Main content page
+├── layout.tsx                # Root layout
+├── page.tsx                  # Main content feed
+├── auth/
+│   └── page.tsx             # Login & register page
+├── profile/
+│   └── page.tsx             # User profile page
+├── saved/
+│   └── page.tsx             # Saved articles page
+└── settings/
+    └── page.tsx             # Settings & preferences page
 
 components/
-├── content-card.tsx
-├── expanded-modal.tsx
-├── fullscreen-content.tsx
-├── profile-menu.tsx
-└── theme-provider.tsx
+├── content-card.tsx         # Individual article card
+├── expanded-modal.tsx       # Read more modal
+├── fullscreen-content.tsx   # Focus mode full-screen view
+├── profile-menu.tsx         # Profile dropdown menu
+└── theme-provider.tsx       # Theme context provider
 ```
 
 ---
