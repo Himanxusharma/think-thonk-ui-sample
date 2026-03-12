@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import AdminRoleGuard from '@/components/admin/admin-role-guard'
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard',
@@ -13,7 +14,8 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-background">
+    <AdminRoleGuard>
+      <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="sticky top-0 bg-background/80 backdrop-blur-sm border-b border-border z-40">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
@@ -32,6 +34,7 @@ export default function AdminLayout({
       <main className="max-w-4xl mx-auto px-4 py-8">
         {children}
       </main>
-    </div>
+      </div>
+    </AdminRoleGuard>
   )
 }

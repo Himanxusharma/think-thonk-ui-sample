@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { User, Bookmark, Settings, LogOut, ChevronRight, Zap } from 'lucide-react'
 import Link from 'next/link'
-import { isCurrentUserAdmin } from '@/lib/services/admin_service'
+import AuthService from '@/lib/services/auth_service'
 
 export default function ProfileMenu() {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,7 +18,7 @@ export default function ProfileMenu() {
     }
 
     // Check if user is admin
-    setIsAdmin(isCurrentUserAdmin())
+    setIsAdmin(AuthService.isAdmin())
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -101,6 +101,7 @@ export default function ProfileMenu() {
           <button
             onClick={() => {
               setIsOpen(false)
+              AuthService.logout()
               window.location.href = '/auth'
             }}
             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-500/5 transition-colors text-sm group text-red-500"

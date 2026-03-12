@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
+import AuthService from '@/lib/services/auth_service'
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -11,39 +12,48 @@ export default function AuthPage() {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const testCredentials = {
-    email: 'demo@thinkthonk.com',
-    password: 'Demo123!@#',
-    name: 'Demo User',
-  }
+  const testCredentials = AuthService.getTestCredentials()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccess('')
+    setLoading(true)
 
     if (isLogin) {
-      if (email === testCredentials.email && password === testCredentials.password) {
+      const result = AuthService.login(email, password)
+      if (result.success) {
         setSuccess('Login successful! Redirecting...')
         setTimeout(() => {
           window.location.href = '/'
         }, 1500)
       } else {
-        setError('Invalid email or password. Try demo@thinkthonk.com / Demo123!@#')
+        setError(result.error || 'Login failed')
+        setLoading(false)
       }
     } else {
       if (!name || !email || !password) {
         setError('Please fill in all fields')
+        setLoading(false)
         return
       }
-      setSuccess('Account created! Redirecting to login...')
-      setTimeout(() => {
-        setIsLogin(true)
-        setEmail('')
-        setPassword('')
-        setName('')
-      }, 1500)
+
+      const result = AuthService.register(email, password, name)
+      if (result.success) {
+        setSuccess('Account created! Switching to login...')
+        setTimeout(() => {
+          setIsLogin(true)
+          setEmail('')
+          setPassword('')
+          setName('')
+          setLoading(false)
+        }, 1500)
+      } else {
+        setError(result.error || 'Registration failed')
+        setLoading(false)
+      }
     }
   }
 
@@ -145,9 +155,10 @@ export default function AuthPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2.5 rounded-lg transition-colors mt-6"
+              disabled={loading}
+              className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-medium py-2.5 rounded-lg transition-colors mt-6"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Create Account'}
             </button>
           </form>
 
@@ -181,15 +192,29 @@ export default function AuthPage() {
         </div>
 
         {/* Test Credentials Info */}
-        <div className="bg-muted/50 border border-border rounded-lg p-4">
-          <p className="text-xs font-semibold text-foreground mb-2">Test Credentials:</p>
-          <div className="space-y-1 text-xs text-muted-foreground font-mono">
-            <p>
-              <span className="text-foreground">Email:</span> {testCredentials.email}
-            </p>
-            <p>
-              <span className="text-foreground">Password:</span> {testCredentials.password}
-            </p>
+        <div className="space-y-3">
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+            <p className="text-xs font-semibold text-foreground mb-2">Admin Account:</p>
+            <div className="space-y-1 text-xs text-muted-foreground font-mono">
+              <p>
+                <span className="text-foreground">Email:</span> {testCredentials.admin.email}
+              </p>
+              <p>
+                <span className="text-foreground">Password:</span> {testCredentials.admin.password}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-muted/50 border border-border rounded-lg p-4">
+            <p className="text-xs font-semibold text-foreground mb-2">User Account:</p>
+            <div className="space-y-1 text-xs text-muted-foreground font-mono">
+              <p>
+                <span className="text-foreground">Email:</span> {testCredentials.user.email}
+              </p>
+              <p>
+                <span className="text-foreground">Password:</span> {testCredentials.user.password}
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ArrowLeft, Mail, Calendar, MapPin, Edit2, LogOut, Zap } from 'lucide-react'
 import Link from 'next/link'
-import { isCurrentUserAdmin } from '@/lib/services/admin_service'
+import AuthService from '@/lib/services/auth_service'
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
@@ -18,12 +18,30 @@ export default function ProfilePage() {
   const [editForm, setEditForm] = useState(profile)
 
   useEffect(() => {
-    setIsAdmin(isCurrentUserAdmin())
+    const currentUser = AuthService.getCurrentUser()
+    if (currentUser) {
+      setProfile((prev) => ({
+        ...prev,
+        name: currentUser.name,
+        email: currentUser.email,
+      }))
+      setEditForm((prev) => ({
+        ...prev,
+        name: currentUser.name,
+        email: currentUser.email,
+      }))
+      setIsAdmin(currentUser.role === 'admin')
+    }
   }, [])
 
   const handleSaveProfile = () => {
     setProfile(editForm)
     setIsEditing(false)
+  }
+
+  const handleLogout = () => {
+    AuthService.logout()
+    window.location.href = '/auth'
   }
 
   return (
@@ -198,7 +216,10 @@ export default function ProfilePage() {
         )}
 
         {/* Logout Button */}
-        <button className="w-full flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 font-medium py-2.5 rounded-lg transition-colors border border-red-500/20">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 font-medium py-2.5 rounded-lg transition-colors border border-red-500/20"
+        >
           <LogOut className="w-4 h-4" />
           Logout
         </button>

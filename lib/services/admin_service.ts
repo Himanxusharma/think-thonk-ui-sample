@@ -18,6 +18,7 @@ import {
   AdminIdeaJSON,
   IDEA_CATEGORIES,
 } from '@/lib/models/content_model'
+import AuthService from '@/lib/services/auth_service'
 
 /**
  * Validates admin idea input
@@ -294,18 +295,12 @@ export async function saveDraft(
 }
 
 /**
- * Gets current user's role
- * Mock implementation - replace with actual auth system
- * @returns User role
+ * Gets current user's role from auth service
+ * @returns User role ('admin', 'moderator', or 'user')
  */
 export function getCurrentUserRole(): string {
-  // This is a mock - would be replaced with actual auth system
-  // For now, check localStorage or session
-  if (typeof window !== 'undefined') {
-    const isAdmin = localStorage.getItem('isAdmin') === 'true'
-    return isAdmin ? 'admin' : 'user'
-  }
-  return 'user'
+  const user = AuthService.getCurrentUser()
+  return user?.role || 'user'
 }
 
 /**
