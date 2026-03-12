@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { User, Bookmark, Settings, LogOut, ChevronRight } from 'lucide-react'
+import { User, Bookmark, Settings, LogOut, ChevronRight, Zap } from 'lucide-react'
 import Link from 'next/link'
+import { isCurrentUserAdmin } from '@/lib/services/admin_service'
 
 export default function ProfileMenu() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -14,6 +16,9 @@ export default function ProfileMenu() {
         setIsOpen(false)
       }
     }
+
+    // Check if user is admin
+    setIsAdmin(isCurrentUserAdmin())
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -24,6 +29,12 @@ export default function ProfileMenu() {
     { icon: Bookmark, label: 'Saved Articles', href: '/saved' },
     { icon: Settings, label: 'Settings', href: '/settings' },
   ]
+
+  const adminItems = isAdmin
+    ? [{ icon: Zap, label: 'Admin Dashboard', href: '/admin' }]
+    : []
+
+  const allItems = [...menuItems, ...adminItems]
 
   return (
     <div ref={menuRef} className="relative">
@@ -49,18 +60,31 @@ export default function ProfileMenu() {
 
           {/* Menu Items */}
           <div className="py-1">
-            {menuItems.map((item, index) => {
+            {allItems.map((item, index) => {
               const Icon = item.icon
+              const isAdminItem = item.href === '/admin'
               return (
                 <Link
                   key={index}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-muted transition-colors group text-sm"
+                  className={`flex items-center justify-between px-4 py-3 transition-colors group text-sm ${
+                    isAdminItem
+                      ? 'bg-primary/5 hover:bg-primary/10 border-l-2 border-primary'
+                      : 'hover:bg-muted'
+                  }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <span className="text-foreground group-hover:text-foreground">
+                    <Icon className={`w-4 h-4 transition-colors ${
+                      isAdminItem
+                        ? 'text-primary group-hover:text-primary'
+                        : 'text-muted-foreground group-hover:text-primary'
+                    }`} />
+                    <span className={`font-medium ${
+                      isAdminItem
+                        ? 'text-primary'
+                        : 'text-foreground group-hover:text-foreground'
+                    }`}>
                       {item.label}
                     </span>
                   </div>

@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowLeft, Mail, Calendar, MapPin, Edit2, LogOut } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ArrowLeft, Mail, Calendar, MapPin, Edit2, LogOut, Zap } from 'lucide-react'
 import Link from 'next/link'
+import { isCurrentUserAdmin } from '@/lib/services/admin_service'
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [profile, setProfile] = useState({
     name: 'Demo User',
     email: 'demo@thinkthonk.com',
@@ -14,6 +16,10 @@ export default function ProfilePage() {
     joinDate: 'Jan 15, 2024',
   })
   const [editForm, setEditForm] = useState(profile)
+
+  useEffect(() => {
+    setIsAdmin(isCurrentUserAdmin())
+  }, [])
 
   const handleSaveProfile = () => {
     setProfile(editForm)
@@ -179,6 +185,17 @@ export default function ProfilePage() {
             <p className="text-xs text-muted-foreground mt-1">Current Streak</p>
           </div>
         </div>
+
+        {/* Admin Button */}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className="w-full flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-medium py-2.5 rounded-lg transition-colors border border-primary/20 mb-3"
+          >
+            <Zap className="w-4 h-4" />
+            Admin Dashboard
+          </Link>
+        )}
 
         {/* Logout Button */}
         <button className="w-full flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 font-medium py-2.5 rounded-lg transition-colors border border-red-500/20">
