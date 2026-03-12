@@ -92,6 +92,14 @@ A modern, minimalist content discovery feed with smooth full-page scrolling and 
 - **Data**: Download data and delete account options
 - **About**: App version, build number, and last updated date
 
+### `/admin` - Admin Dashboard (Role-Based Feature)
+- **Create Ideas**: Admins can create and publish content ideas
+- **Dual Input Modes**: Toggle between user-friendly form fields and JSON mode
+- **Draft & Publish**: Save as draft or publish directly to production
+- **Idea Management**: View, track, and manage all created ideas with engagement metrics
+- **Role-Protected**: Only accessible to users with admin role
+- **Access Points**: Available through profile menu and profile page button
+
 ---
 
 ## 📱 Responsive Design
@@ -852,17 +860,43 @@ components/
 ├── expanded-modal.tsx       # Read more modal
 ├── fullscreen-content.tsx   # Focus mode full-screen view
 ├── profile-menu.tsx         # Profile dropdown menu
-└── theme-provider.tsx       # Theme context provider
+├── theme-provider.tsx       # Theme context provider
+└── admin/                   # Admin feature components
+    ├── admin-panel.tsx      # Main admin dashboard
+    ├── idea-form.tsx        # Form wrapper with mode toggle
+    ├── fields-editor.tsx    # Input fields mode editor
+    ├── json-editor.tsx      # JSON mode editor
+    └── form-toggle.tsx      # Mode switcher (JSON/Fields)
 ```
 
 ---
 
 ## 📊 Changelog
 
-**Last Updated**: March 13, 2026 (v2.6 - Flutter-Friendly Architecture, Complete Documentation)
+**Last Updated**: March 13, 2026 (v3.0 - Admin Role-Based Features)
 **Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
 **Status**: Production Ready ✓ | Flutter-Friendly ✓
-**Features**: Like/Save Counters • Real-Time Metrics • Responsive Design • Profile Menu • Focus Mode • Smart Auto-Scroll • Red Likes • Streak Tracking • Dark/Light Theme • Flutter-Ready Architecture • 8 Diverse Articles
+**Features**: Like/Save Counters • Real-Time Metrics • Responsive Design • Profile Menu • Focus Mode • Smart Auto-Scroll • Red Likes • Streak Tracking • Dark/Light Theme • Flutter-Ready Architecture • Admin Dashboard • Role-Based Access • Dual Input Modes • JSON Editor • 8 Diverse Articles
+
+### v3.0 Changes - Admin Role-Based Features (CURRENT)
+- **Created `lib/models/role_model.ts`**: UserRole enum and AdminUser interface with permissions system
+- **Extended `lib/models/content_model.ts`**: Added Idea, AdminIdeaInput, IdeaFormMode, IdeaStatus models
+- **Created `lib/services/admin_service.ts`**: Admin business logic (validation, JSON parsing, idea creation)
+- **Created Admin Components**:
+  - `components/admin/admin-panel.tsx`: Main dashboard with stats and idea list
+  - `components/admin/idea-form.tsx`: Form wrapper with mode switching
+  - `components/admin/fields-editor.tsx`: User-friendly form input fields
+  - `components/admin/json-editor.tsx`: JSON mode with validation and formatting
+  - `components/admin/form-toggle.tsx`: Mode switcher button
+- **Created Admin Pages**:
+  - `app/admin/page.tsx`: Admin dashboard with role-based access control
+  - `app/admin/layout.tsx`: Admin layout wrapper
+- **Updated Profile Integration**: Added admin button to profile page, admin link in profile menu
+- **Created `scripts/setup_ideas_table.sql`**: Database migration for ideas table with indexes
+- **Added ADMIN_FEATURES.md**: Comprehensive admin feature documentation (614 lines)
+- **Updated FLUTTER_MIGRATION_GUIDE.md**: Added admin features migration patterns (308 lines of new content)
+- **Dual Input Modes**: Admins can create content via form fields or JSON input
+- **Role-Based Access**: Only admins can create/publish content, moderators can create (draft only)
 
 ### v2.6 Changes - Flutter-Friendly Architecture
 - **Created `lib/constants/app_constants.ts`**: All design tokens, colors, typography, spacing centralized (Flutter: `app_constants.dart`)
@@ -870,6 +904,6 @@ components/
 - **Created `lib/services/content_service.ts`**: Pure business logic layer with static methods (Flutter: Dart services)
 - **Created `lib/repositories/content_repository.ts`**: Data access abstraction layer (Flutter: Riverpod providers)
 - **Created `lib/utils/helpers.ts`**: Reusable utility functions (Flutter: Direct Dart port)
-- **Added FLUTTER_MIGRATION_GUIDE.md**: Complete step-by-step migration guide (393 lines)
+- **Added FLUTTER_MIGRATION_GUIDE.md**: Complete step-by-step migration guide (393 lines + 308 new lines for admin)
 - **Added ARCHITECTURE.md**: Comprehensive architecture documentation (385 lines)
 - **Layer-Based Design**: UI completely separated from business logic for easy cross-platform migration

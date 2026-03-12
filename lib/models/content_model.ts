@@ -78,3 +78,118 @@ export enum Theme {
   DARK = 'dark',
   SYSTEM = 'system',
 }
+
+// ============================================================================
+// ADMIN FEATURE MODELS - Added for role-based content creation
+// ============================================================================
+
+export enum IdeaFormMode {
+  JSON = 'json',
+  FIELDS = 'fields',
+}
+
+export enum IdeaStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+}
+
+/**
+ * Idea data structure for admin-created content
+ * Maps to the ideas table in the database
+ */
+export interface Idea {
+  id: string
+  category: string
+  title: string
+  explanation: string
+  example: string
+  takeaway: string
+  customHeading?: string
+  customContent?: string
+  
+  // Engagement metrics
+  likesCount: number
+  savesCount: number
+  shareCount: number
+  commentsCount: number
+  
+  // Publishing & Metadata
+  status: IdeaStatus
+  createdBy: string
+  createdOn: Date
+  publishedOn?: Date
+  modifiedOn: Date
+}
+
+/**
+ * Admin input for creating/editing ideas
+ * This is what the admin form submits
+ */
+export interface AdminIdeaInput {
+  category: string
+  title: string
+  explanation: string
+  example: string
+  takeaway: string
+  customHeading?: string
+  customContent?: string
+  status: IdeaStatus
+}
+
+/**
+ * JSON representation of AdminIdeaInput for JSON mode editor
+ */
+export interface AdminIdeaJSON {
+  category: string
+  title: string
+  explanation: string
+  example: string
+  takeaway: string
+  customHeading?: string
+  customContent?: string
+  status: string
+}
+
+/**
+ * Validation errors for idea input
+ */
+export interface IdeaValidationError {
+  field: keyof AdminIdeaInput
+  message: string
+}
+
+/**
+ * Response from admin service operations
+ */
+export interface AdminActionResponse<T = any> {
+  success: boolean
+  data?: T
+  error?: string
+  errors?: IdeaValidationError[]
+}
+
+/**
+ * Form submission payload
+ */
+export interface IdeaFormSubmission {
+  input: AdminIdeaInput
+  mode: IdeaFormMode
+  rawJSON?: string
+}
+
+/**
+ * Constants for categories (extended from existing)
+ */
+export const IDEA_CATEGORIES = [
+  'Psychology',
+  'Neuroscience',
+  'Behavioral Science',
+  'Cognitive Science',
+  'Philosophy',
+  'Technology',
+  'Ecology',
+  'Economics',
+  'Other',
+] as const
+
+export type IdeaCategory = (typeof IDEA_CATEGORIES)[number]

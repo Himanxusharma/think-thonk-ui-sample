@@ -351,6 +351,314 @@ test/
     └── app_test.dart
 ```
 
+## Admin Features Migration
+
+### Overview
+The admin features introduce role-based content creation with dual input modes (form fields and JSON). This section covers migrating these features to Flutter.
+
+### Models to Migrate
+```dart
+// lib/models/role_model.dart
+enum UserRole { user, admin, moderator }
+
+@freezed
+class AdminUser with _$AdminUser {
+  const factory AdminUser({
+    required String id,
+    required String name,
+    required String email,
+    required UserRole role,
+    required DateTime createdAt,
+  }) = _AdminUser;
+}
+
+// lib/models/content_model.dart - Add these classes
+enum IdeaFormMode { json, fields }
+enum IdeaStatus { draft, published }
+
+@freezed
+class AdminIdeaInput with _$AdminIdeaInput {
+  const factory AdminIdeaInput({
+    required String category,
+    required String title,
+    required String explanation,
+    required String example,
+    required String takeaway,
+    String? customHeading,
+    String? customContent,
+    required IdeaStatus status,
+  }) = _AdminIdeaInput;
+
+  factory AdminIdeaInput.fromJson(Map<String, dynamic> json) =>
+      _$AdminIdeaInputFromJson(json);
+}
+
+@freezed
+class Idea with _$Idea {
+  const factory Idea({
+    required String id,
+    required String category,
+    required String title,
+    required String explanation,
+    required String example,
+    required String takeaway,
+    String? customHeading,
+    String? customContent,
+    required int likesCount,
+    required int savesCount,
+    required int shareCount,
+    required int commentsCount,
+    required IdeaStatus status,
+    required String createdBy,
+    required DateTime createdOn,
+    DateTime? publishedOn,
+    required DateTime modifiedOn,
+  }) = _Idea;
+
+  factory Idea.fromJson(Map<String, dynamic> json) => _$IdeaFromJson(json);
+}
+```
+
+### Services to Migrate
+```dart
+// lib/services/admin_service.dart
+class AdminService {
+  static List<IdeaValidationError> validateIdeaInput(AdminIdeaInput input) {
+    final errors = <IdeaValidationError>[];
+    
+    if (input.category.isEmpty) {
+      errors.add(IdeaValidationError(
+        field: 'category',
+        message: 'Category is required',
+      ));
+    }
+    
+    if (input.title.isEmpty || input.title.length > 200) {
+      errors.add(IdeaValidationError(
+        field: 'title',
+        message: 'Title must be between 1 and 200 characters',
+      ));
+    }
+    
+    return errors;
+  }
+
+  static Future<AdminActionResponse<Idea>> createIdea(
+    AdminIdeaInput input,
+    String userId,
+  ) async {
+    final errors = validateIdeaInput(input);
+    if (errors.isNotEmpty) {
+      return AdminActionResponse(success: false, errors: errors);
+    }
+
+    try {
+      // Call repository
+      final idea = await IdeaRepository.createIdea(input, userId);
+      return AdminActionResponse(success: true, data: idea);
+    } catch (e) {
+      return AdminActionResponse(
+        success: false,
+        error: 'Failed to create idea',
+      );
+    }
+  }
+
+  static String ideaInputToJson(AdminIdeaInput input) {
+    return jsonEncode(input.toJson());
+  }
+
+  static AdminActionResponse<AdminIdeaInput> parseJsonInput(String jsonString) {
+    try {
+      final json = jsonDecode(jsonString) as Map<String, dynamic>;
+      final input = AdminIdeaInput.fromJson(json);
+      
+      final errors = validateIdeaInput(input);
+      if (errors.isNotEmpty) {
+        return AdminActionResponse(
+          success: false,
+          error: 'Validation failed',
+          errors: errors,
+        );
+      }
+
+      return AdminActionResponse(success: true, data: input);
+    } catch (e) {
+      return AdminActionResponse(success: false, error: 'Invalid JSON');
+    }
+  }
+
+  static bool isCurrentUserAdmin() {
+    // Implementation depends on your auth system
+    final prefs = GetIt.I<SharedPreferences>();
+    return prefs.getBool('isAdmin') ?? false;
+  }
+}
+```
+
+### UI Components to Build
+
+**FormTogglePage** (equivalent to form-toggle.tsx):
+```dart
+class FormToggle extends StatelessWidget {
+  final IdeaFormMode mode;
+  final Function(IdeaFormMode) onModeChange;
+
+  const FormToggle({
+    required this.mode,
+    required this.onModeChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () => onModeChange(IdeaFormMode.fields),
+          icon: const Icon(Icons.description),
+          label: const Text('Input Fields'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: mode == IdeaFormMode.fields ? Colors.blue : Colors.grey,
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () => onModeChange(IdeaFormMode.json),
+          icon: const Icon(Icons.code),
+          label: const Text('JSON Mode'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: mode == IdeaFormMode.json ? Colors.blue : Colors.grey,
+          ),
+        ),
+      ],
+    );
+  }
+}
+```
+
+**IdeaFormScreen**:
+```dart
+class IdeaFormScreen extends ConsumerStatefulWidget {
+  const IdeaFormScreen();
+
+  @override
+  ConsumerState<IdeaFormScreen> createState() => _IdeaFormScreenState();
+}
+
+class _IdeaFormScreenState extends ConsumerState<IdeaFormScreen> {
+  late IdeaFormMode _mode;
+  late AdminIdeaInput _input;
+  late TextEditingController _jsonController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mode = IdeaFormMode.fields;
+    _input = AdminIdeaInput(
+      category: '',
+      title: '',
+      explanation: '',
+      example: '',
+      takeaway: '',
+      status: IdeaStatus.draft,
+    );
+    _jsonController = TextEditingController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        FormToggle(
+          mode: _mode,
+          onModeChange: (newMode) => setState(() => _mode = newMode),
+        ),
+        if (_mode == IdeaFormMode.fields)
+          FieldsEditorWidget(
+            input: _input,
+            onChanged: (newInput) => setState(() => _input = newInput),
+          )
+        else
+          JsonEditorWidget(
+            controller: _jsonController,
+            onJsonChange: (json) {
+              final result = AdminService.parseJsonInput(json);
+              if (result.success && result.data != null) {
+                setState(() => _input = result.data!);
+              }
+            },
+          ),
+        ElevatedButton(
+          onPressed: _publishIdea,
+          child: const Text('Publish'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _publishIdea() async {
+    final response = await AdminService.createIdea(_input, 'user_123');
+    if (response.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Idea published successfully')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _jsonController.dispose();
+    super.dispose();
+  }
+}
+```
+
+### State Management Pattern
+```dart
+// Using Riverpod
+final adminIdeasProvider = StateNotifierProvider<AdminIdeasNotifier, List<Idea>>(
+  (ref) => AdminIdeasNotifier(),
+);
+
+class AdminIdeasNotifier extends StateNotifier<List<Idea>> {
+  AdminIdeasNotifier() : super([]);
+
+  Future<void> createIdea(AdminIdeaInput input, String userId) async {
+    final response = await AdminService.createIdea(input, userId);
+    if (response.success && response.data != null) {
+      state = [...state, response.data!];
+    }
+  }
+}
+```
+
+### Database Migration
+```sql
+-- Dart/Flutter will use similar schema
+-- Use Drift or Sqflite for local database
+-- Use Firebase/Supabase for cloud sync
+
+CREATE TABLE ideas (
+  id TEXT PRIMARY KEY,
+  category TEXT NOT NULL,
+  title TEXT NOT NULL,
+  explanation TEXT NOT NULL,
+  example TEXT NOT NULL,
+  takeaway TEXT NOT NULL,
+  custom_heading TEXT,
+  custom_content TEXT,
+  likes_count INTEGER DEFAULT 0,
+  saves_count INTEGER DEFAULT 0,
+  share_count INTEGER DEFAULT 0,
+  comments_count INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'draft',
+  created_by TEXT,
+  created_on TEXT NOT NULL,
+  published_on TEXT,
+  modified_on TEXT NOT NULL
+);
+```
+
 ## Deployment Considerations
 
 ### iOS
