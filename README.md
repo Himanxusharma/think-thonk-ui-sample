@@ -2,22 +2,44 @@
 
 A modern, minimalist content discovery feed with smooth full-page scrolling and fullscreen content viewing, built with Next.js 16, React 19, and Tailwind CSS 4. This is a professional design system documentation for perfect UI reproduction.
 
+**✨ Flutter-Friendly Architecture**: This codebase is architected in layers specifically designed for easy migration to Flutter. See [FLUTTER_MIGRATION_GUIDE.md](./FLUTTER_MIGRATION_GUIDE.md) and [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
+
+## 📋 Table of Contents
+
+1. [Key Features](#key-features)
+2. [Responsive Design](#-responsive-design)
+3. [Design System](#-design-system)
+4. [Component Architecture](#-component-architecture)
+5. [Flutter Migration](#-flutter-friendly-migration)
+6. [Fixed Issues](#-fixed-issues--improvements)
+7. [Reproduction Checklist](#-reproduction-checklist)
+8. [Setup & Installation](#-setup--installation)
+9. [Changelog](#changelog)
+
 ## Key Features
+
+### Content & Engagement
+- **Like & Save Counters**: Real-time count display showing total likes and saves for each article, increments/decrements when toggling
+- **Persistent State Tracking**: All Like, Save, and engagement states sync seamlessly between feed and focus mode views
+- **Streak Tracking**: Real-time streak counter with flame icon, increments when articles are liked
+- **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
+
+### User Interface
 - **Fully Responsive Design**: Works seamlessly on mobile (320px), tablet (640px+), and desktop (1024px+) with adaptive layouts
 - **Scrollbar-Free Design**: Fully hidden scrollbars across all browsers using aggressive CSS rules for Chrome, Firefox, Safari, and Edge
-- **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
 - **Borderless Card Layout**: Removed visible borders for a seamless, modern aesthetic
-- **Read More Link**: Classic "Read More →" underlined link for expanded content view
-- **Focus Mode Button**: Icon button in action bar to enter full-screen article view starting from the clicked card
-- **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping posts
+- **Theme-Aware Text Selection**: Text selection colors match the primary theme automatically with dark mode support
+
+### Content Navigation
+- **Read More Link**: Classic "Read More →" underlined link for expanded modal content view
+- **Focus Mode**: Full-screen article viewing with snap-scroll navigation between posts, starts from clicked card
+- **Smart Auto-Scrolling**: Auto-snap to next/previous post with improved velocity detection and debouncing to prevent skipping
+- **Bottom Navigation Bar**: Sticky action buttons (Save, Like, Share, Focus, Close) for comfortable thumb reach
+
+### User Experience
 - **Red Like Button**: Heart icon turns vivid red when liked for instant visual feedback
-- **Bottom Navigation Bar**: Action buttons (Save, Like, Share, Focus, Close) positioned at bottom of focus mode for comfortable thumb reach
-- **Clean Boundaries**: Removed "beginning/end" messages for a minimalist interface
-- **Persistent State**: Like and Save states sync seamlessly between feed and focus mode views
-- **Profile Menu**: Dropdown menu in top-right with Profile, Saved, Settings, and Logout options (foundation for future features)
-- **Streak Tracking**: Real-time streak counter with flame icon display in header/footer, increments on likes
+- **Profile Menu**: Dropdown menu in top-right with Profile, Saved, Settings, and Logout options
 - **Dark/Light Theme**: Automatic theme switching with system preference detection using oklch color space
-- **Extended Test Content**: 8 diverse articles covering psychology, neuroscience, philosophy, technology, ecology, and economics
 - **Graceful Share Handling**: Silent error handling for share API permission denied without console errors
 
 ---
@@ -221,8 +243,10 @@ lg:     ≥ 1024px (laptops, desktops)
 **Bottom Section** (Actions):
 - Four action buttons: Save, Like, Share, Focus
 - Layout: Horizontal flex with `gap-6 sm:gap-8`
-- Button style: Icon + label flex column
+- Button style: Icon + label flex column with counter display
+- Counter Display: Secondary text line showing count (text-xs, muted-foreground/60 color)
 - States: Save/Share outline when inactive, **Like heart turns red** when liked
+- Count Updates: Increments when user likes/saves, decrements when toggled off
 - Icon Set: BookmarkIcon (Save), Heart (Like, red when active), Share2 (Share), Maximize2 (Focus)
 
 #### 3. **Expanded Modal** (`components/expanded-modal.tsx`)
@@ -543,8 +567,53 @@ To recreate this exact UI design on any system:
 
 ---
 
+## 🚀 Flutter-Friendly Migration
+
+This project is structured for easy conversion to Flutter. All business logic and data models are separated from UI.
+
+### Architecture for Cross-Platform
+
+**Layers** (organized in `lib/` directory):
+
+| Layer | Files | Purpose | Flutter Equivalent |
+|-------|-------|---------|-------------------|
+| **Constants** | `lib/constants/app_constants.ts` | Design tokens, colors, spacing | `lib/constants/app_constants.dart` |
+| **Models** | `lib/models/content_model.ts` | Data structures, interfaces | Freezed classes with `@freezed` |
+| **Services** | `lib/services/content_service.ts` | Business logic, pure functions | Dart service classes |
+| **Repository** | `lib/repositories/content_repository.ts` | Data access layer | Riverpod providers |
+| **Utils** | `lib/utils/helpers.ts` | Helper functions | Dart utility functions |
+| **UI** | `app/page.tsx`, `components/*.tsx` | React components | Flutter Widgets |
+
+### Key Benefits for Flutter Migration
+
+1. **Separated Layers**: UI code doesn't depend on business logic
+2. **Pure Functions**: Services use pure functions with no side effects
+3. **Type-Safe Models**: All data interfaces defined in `lib/models/`
+4. **Centralized Constants**: All design tokens in `lib/constants/`
+5. **Utility Functions**: Reusable helpers that work across platforms
+
+### Migration Checklist
+
+- [ ] Phase 1: Set up Flutter project structure
+- [ ] Phase 2: Migrate constants and models (no UI)
+- [ ] Phase 3: Migrate services and repositories
+- [ ] Phase 4: Create Flutter UI widgets
+- [ ] Phase 5: Integrate state management (Riverpod)
+- [ ] Phase 6: Test and optimize
+
+### Resources
+
+- **[FLUTTER_MIGRATION_GUIDE.md](./FLUTTER_MIGRATION_GUIDE.md)** - Complete step-by-step migration guide
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Detailed architecture documentation
+- **Estimated time**: 3-4 weeks for production-ready Flutter app
+
+---
+
 ## 🐛 Fixed Issues & Improvements
 
+- **Like & Save Counters**: Implemented real-time count tracking that increments/decrements when users like or save articles
+- **Counter Display**: Counts appear below each action label in both feed view and focus mode with distinct styling
+- **Count Persistence**: Counters update across all views when user interaction occurs, reflecting changes in real-time
 - **Hydration Mismatch**: Added `suppressHydrationWarning` to both `<html>` and `<body>` tags to resolve server/client rendering conflicts
 - **Scrollbar Visibility**: Applied aggressive CSS rules to hide scrollbars across all browsers while maintaining full scroll functionality
 - **Text Selection**: Added theme-aware text selection with `::selection` matching primary color
@@ -552,14 +621,13 @@ To recreate this exact UI design on any system:
 - **Focus Mode Starting Position**: Fixed to scroll to the clicked card instead of first card using `useEffect` with initial index calculation
 - **Red Like Button**: Heart icon now turns vivid red (`fill-red-500 text-red-500`) when liked in both feed and focus mode
 - **Read More Link Restored**: Classic "Read More →" underlined link for expanded modal view with original styling
-- **Focus Mode Button Position**: Icon button in action bar (alongside Save/Like/Share buttons)
 - **Bottom Navigation in Focus Mode**: Action buttons positioned at bottom for better ergonomics and thumb-friendly interface
 - **Clean Boundaries**: Removed "beginning/end" boundary messages for minimalist design while maintaining smooth navigation
 - **Share Error Handling**: Proper async/await with try-catch to silently handle share API permission denied errors
 - **Profile Menu Added**: Dropdown menu in navbar with Profile, Saved, Settings, Logout options (foundation for future features)
 - **Responsive Design**: Mobile-first approach with proper breakpoints (320px, 640px, 768px, 1024px) and adaptive layouts
 - **State Persistence**: Like/Save states sync seamlessly between feed and focus mode views with real-time updates
-- **Extended Test Data**: Added 8 articles (was 4) covering diverse topics: psychology, neuroscience, philosophy, technology, ecology, economics
+- **Extended Test Data**: Added 8 articles covering diverse topics with realistic like/save counts
 - **Keyboard Navigation**: ESC key properly closes focus mode; keyboard events bound with correct dependency arrays
 
 ---
@@ -649,15 +717,84 @@ When recreating this design:
 11. **Snap Points**: Use mandatory snap-scroll with debouncing to prevent post skipping
 12. **Theme Colors**: Apply oklch values for perfect color consistency across light/dark modes
 
-**Last Updated**: March 11, 2026 (v2.4 - Profile Menu, Focus Mode Fix, Responsive Design, Error Handling)
-**Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
-**Status**: Production Ready ✓
-**Features**: Responsive Design • Profile Menu • Read More Link • Focus Mode Button • Smart Auto-Scroll • Red Likes • Bottom Navigation • 8 Test Articles • Theme Aware Selection • Borderless Design • Streak Tracking • Error Handling
+## 🛠 Setup & Installation
 
-### v2.4 Changes
-- **Profile Menu**: Added dropdown menu in navbar with Profile, Saved, Settings, Logout options
-- **Focus Mode Fix**: Fixed to start from clicked card instead of always first card using proper scroll initialization
-- **Responsive Design**: Fully responsive across mobile (320px), tablet (640px), and desktop (1024px+) with adaptive layouts
-- **Share Error Handling**: Improved with proper async/await and try-catch to silently handle permission denied errors
-- **Mobile Optimization**: Touch-friendly buttons, auto-hiding navbar on scroll, optimized spacing for all devices
-- **Comprehensive Documentation**: Added responsive design section and profile menu component details to README
+### Prerequisites
+
+- Node.js 18+ (for Next.js 16)
+- npm, yarn, pnpm, or bun
+
+### Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/Himanxusharma/think-thonk-ui-sample.git
+
+# Install dependencies
+npm install
+# or
+pnpm install
+# or
+yarn install
+# or
+bun install
+
+# Run development server
+npm run dev
+# or
+pnpm dev
+# or
+yarn dev
+# or
+bun dev
+
+# Open http://localhost:3000 in your browser
+```
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+### Project Structure
+
+```
+lib/
+├── constants/       # Design tokens (Flutter: dart constants)
+├── models/         # Data interfaces (Flutter: Dart classes + freezed)
+├── services/       # Business logic (Flutter: Dart services)
+├── repositories/   # Data access (Flutter: Riverpod providers)
+└── utils/          # Helpers (Flutter: Dart utilities)
+
+app/
+├── layout.tsx      # Root layout
+└── page.tsx        # Main content page
+
+components/
+├── content-card.tsx
+├── expanded-modal.tsx
+├── fullscreen-content.tsx
+├── profile-menu.tsx
+└── theme-provider.tsx
+```
+
+---
+
+## 📊 Changelog
+
+**Last Updated**: March 13, 2026 (v2.6 - Flutter-Friendly Architecture, Complete Documentation)
+**Framework Version**: Next.js 16.1.6 | React 19.2.4 | Tailwind CSS 4.2.0  
+**Status**: Production Ready ✓ | Flutter-Friendly ✓
+**Features**: Like/Save Counters • Real-Time Metrics • Responsive Design • Profile Menu • Focus Mode • Smart Auto-Scroll • Red Likes • Streak Tracking • Dark/Light Theme • Flutter-Ready Architecture • 8 Diverse Articles
+
+### v2.6 Changes - Flutter-Friendly Architecture
+- **Created `lib/constants/app_constants.ts`**: All design tokens, colors, typography, spacing centralized (Flutter: `app_constants.dart`)
+- **Created `lib/models/content_model.ts`**: Type-safe data interfaces and enums (Flutter: Freezed Dart classes)
+- **Created `lib/services/content_service.ts`**: Pure business logic layer with static methods (Flutter: Dart services)
+- **Created `lib/repositories/content_repository.ts`**: Data access abstraction layer (Flutter: Riverpod providers)
+- **Created `lib/utils/helpers.ts`**: Reusable utility functions (Flutter: Direct Dart port)
+- **Added FLUTTER_MIGRATION_GUIDE.md**: Complete step-by-step migration guide (393 lines)
+- **Added ARCHITECTURE.md**: Comprehensive architecture documentation (385 lines)
+- **Layer-Based Design**: UI completely separated from business logic for easy cross-platform migration

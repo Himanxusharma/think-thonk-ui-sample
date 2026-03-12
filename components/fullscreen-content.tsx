@@ -207,7 +207,7 @@ export default function FullscreenContent({
             {/* Save Button */}
             <button
               onClick={() => onSave(content[currentIndex].id)}
-              className="flex items-center gap-1 group p-2"
+              className="flex flex-col items-center gap-1 group p-2"
               aria-label="Save article"
             >
               <BookmarkIcon
@@ -218,12 +218,15 @@ export default function FullscreenContent({
                     : 'text-muted-foreground group-hover:text-foreground'
                 }`}
               />
+              <span className="text-xs text-muted-foreground/60">
+                {content[currentIndex].saveCount}
+              </span>
             </button>
 
             {/* Like Button */}
             <button
               onClick={() => onLike(content[currentIndex].id)}
-              className="flex items-center gap-1 group p-2"
+              className="flex flex-col items-center gap-1 group p-2"
               aria-label="Like article"
             >
               <Heart
@@ -234,6 +237,9 @@ export default function FullscreenContent({
                     : 'text-muted-foreground group-hover:text-foreground'
                 }`}
               />
+              <span className="text-xs text-muted-foreground/60">
+                {content[currentIndex].likeCount}
+              </span>
             </button>
 
             {/* Share Button */}

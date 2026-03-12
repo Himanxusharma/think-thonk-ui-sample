@@ -12,6 +12,8 @@ interface ContentItem {
   saved?: boolean
   liked?: boolean
   shared?: boolean
+  likeCount: number
+  saveCount: number
 }
 
 interface ContentCardProps {
@@ -79,9 +81,14 @@ export default function ContentCard({
                   : 'text-muted-foreground group-hover:text-foreground'
               }`}
             />
-            <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-              Save
-            </span>
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                Save
+              </span>
+              <span className="text-xs text-muted-foreground/60 text-center">
+                {item.saveCount}
+              </span>
+            </div>
           </button>
 
           {/* Like Button */}
@@ -98,9 +105,14 @@ export default function ContentCard({
                   : 'text-muted-foreground group-hover:text-foreground'
               }`}
             />
-            <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-              Like
-            </span>
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                Like
+              </span>
+              <span className="text-xs text-muted-foreground/60 text-center">
+                {item.likeCount}
+              </span>
+            </div>
           </button>
 
           {/* Share Button */}
