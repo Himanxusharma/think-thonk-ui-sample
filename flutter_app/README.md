@@ -1,45 +1,9 @@
-# Think-Thonk UI - Flutter Application
+# Think-Thonk Flutter App
 
-A cross-platform Flutter application that replicates the Think-Thonk web UI exactly, maintaining all functionality, theme, and responsiveness.
+A Flutter replica of the Think-Thonk Next.js web application.  
+Runs on **Web**, **Android**, and **iOS**.
 
-## Features
-
-### Authentication
-- Login/Register pages with form validation
-- Test credentials for immediate testing
-- Password visibility toggle
-- Session management with persistent state
-
-### Content Feed
-- Full-page snap scrolling
-- Article cards with category badges
-- Like, Save, Share, Focus actions
-- Real-time engagement counters
-- Auto-hiding navigation bar
-
-### Focus Mode
-- Full-screen article reading
-- Vertical page-based navigation
-- Bottom action bar with streak display
-- ESC key to close (on web/desktop)
-
-### Read More Modal
-- Expanded content view
-- Bullet list parsing
-- Sticky header with close button
-- Responsive typography
-
-### User Features
-- Profile page with stats
-- Saved articles with search
-- Settings (Theme, Notifications, Privacy)
-- Admin dashboard (role-based)
-
-### Theming
-- Light/Dark mode support
-- System theme detection
-- OKLCH-based color palette
-- Consistent with web version
+---
 
 ## Project Structure
 
@@ -47,136 +11,127 @@ A cross-platform Flutter application that replicates the Think-Thonk web UI exac
 flutter_app/
 ├── lib/
 │   ├── core/
-│   │   ├── constants/
-│   │   │   └── app_constants.dart    # Design tokens
-│   │   └── theme/
-│   │       └── app_theme.dart        # Theme configuration
-│   ├── models/
-│   │   ├── content_model.dart        # Content data models
-│   │   └── auth_model.dart           # Auth data models
-│   ├── services/
-│   │   ├── auth_service.dart         # Authentication logic
-│   │   └── content_service.dart      # Content business logic
-│   ├── providers/
-│   │   ├── theme_provider.dart       # Theme state management
-│   │   ├── content_provider.dart     # Content state management
-│   │   └── auth_provider.dart        # Auth state management
-│   ├── screens/
-│   │   ├── home_screen.dart          # Main feed
-│   │   ├── auth_screen.dart          # Login/Register
-│   │   ├── profile_screen.dart       # User profile
-│   │   ├── saved_screen.dart         # Saved articles
-│   │   ├── settings_screen.dart      # Settings
-│   │   └── admin_screen.dart         # Admin dashboard
-│   ├── widgets/
-│   │   ├── common/                   # Reusable widgets
-│   │   ├── admin/                    # Admin components
-│   │   ├── content_card.dart         # Article card
-│   │   ├── expanded_modal.dart       # Read more modal
-│   │   ├── fullscreen_content.dart   # Focus mode
-│   │   └── profile_menu.dart         # Profile dropdown
-│   └── main.dart                     # App entry point
-├── web/                              # Web platform files
-├── android/                          # Android platform files
-├── ios/                              # iOS platform files
-└── pubspec.yaml                      # Dependencies
+│   │   ├── constants/       # app-level colors, spacing, typography
+│   │   └── theme/           # Material 3 light/dark ThemeData
+│   ├── features/
+│   │   ├── feed/            # main feed: models, repository, controller, screens, widgets
+│   │   │   ├── models/      # Idea domain model
+│   │   │   ├── repositories/# FeedRepository (local mock → Firestore)
+│   │   │   ├── controllers/ # FeedController (Riverpod)
+│   │   │   ├── screens/     # HomeScreen
+│   │   │   └── widgets/     # ContentCard, ExpandedModal, FullscreenContent, ProfileMenu
+│   │   ├── categories/      # category browsing UI
+│   │   │   └── screens/     # CategoriesScreen
+│   │   ├── interactions/    # likes and saves
+│   │   │   ├── models/      # InteractionState
+│   │   │   ├── repositories/# InteractionRepository
+│   │   │   └── controllers/ # InteractionController
+│   │   ├── saved/           # saved articles
+│   │   │   ├── models/      # SavedArticle
+│   │   │   ├── repositories/# SavedRepository
+│   │   │   ├── controllers/ # SavedController
+│   │   │   └── screens/     # SavedScreen
+│   │   ├── share/           # share flow
+│   │   │   └── controllers/ # ShareController
+│   │   ├── streak/          # user streak
+│   │   │   ├── models/      # StreakModel
+│   │   │   ├── repositories/# StreakRepository
+│   │   │   └── controllers/ # StreakController
+│   │   ├── auth/            # authentication
+│   │   │   ├── models/      # AppUser, AuthSession, AuthResponse
+│   │   │   ├── repositories/# AuthRepository
+│   │   │   ├── controllers/ # AuthController + ThemeController
+│   │   │   └── screens/     # AuthScreen, ProfileScreen
+│   │   ├── admin/           # admin dashboard
+│   │   │   ├── models/      # AdminIdea
+│   │   │   ├── controllers/ # AdminController
+│   │   │   ├── screens/     # AdminScreen
+│   │   │   └── widgets/     # AdminPanel, IdeaForm
+│   │   ├── settings/        # app settings
+│   │   │   ├── controllers/ # SettingsController
+│   │   │   └── screens/     # SettingsScreen
+│   │   └── shared/
+│   │       └── widgets/     # ActionButton, CategoryBadge, AppInput, AppSwitch, SettingToggle
+│   ├── services/            # (reserved for Firebase service bootstrap)
+│   ├── app.dart             # MaterialApp router + shell
+│   └── main.dart            # entry point
+├── android/
+├── ios/
+├── web/
+├── test/
+├── FIREBASE_SETUP.md
+└── README.md
 ```
+
+---
 
 ## Getting Started
 
 ### Prerequisites
-- Flutter SDK 3.2.0 or higher
-- Dart SDK 3.2.0 or higher
 
-### Installation
+- Flutter SDK ≥ 3.10
+- Dart SDK ≥ 3.0
+
+### Running the App
 
 ```bash
-# Navigate to flutter_app directory
 cd flutter_app
 
-# Get dependencies
+# Install dependencies
 flutter pub get
 
 # Run on web
 flutter run -d chrome
 
-# Run on iOS simulator
-flutter run -d ios
-
-# Run on Android emulator
+# Run on Android (emulator or device)
 flutter run -d android
 
-# Build for production
-flutter build web
-flutter build apk
-flutter build ios
+# Run on iOS (macOS only)
+flutter run -d ios
 ```
+
+---
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| **Feed** | Vertical snap-scroll content cards with auto-hiding navbar |
+| **Fullscreen / Focus** | Full-page reading mode with bottom action bar |
+| **Expanded Modal** | Overlay with parsed paragraphs and bullet points |
+| **Like / Save / Share** | Per-item engagement with live counters |
+| **Streak** | Daily reading streak with fire icon |
+| **Auth** | Login + Registration with hardcoded test users |
+| **Profile** | View/edit user profile with stats |
+| **Saved Articles** | Searchable list of saved items |
+| **Categories** | Browse ideas grouped by topic |
+| **Settings** | Theme toggle, notifications, privacy |
+| **Admin** | Create/publish ideas with field or JSON input (admin users only) |
+| **Dark Mode** | Full light/dark/system theme support |
+
+---
 
 ## Test Credentials
 
-**Admin Account:**
-- Email: admin@thinkthonk.com
-- Password: Admin123!@#
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@thinkthonk.com` | `Admin123!@#` |
+| User | `demo@thinkthonk.com` | `Demo123!@#` |
 
-**User Account:**
-- Email: demo@thinkthonk.com
-- Password: Demo123!@#
+---
 
-## Dependencies
+## Firebase Integration
 
-- `flutter_riverpod` - State management
-- `go_router` - Navigation
-- `google_fonts` - Typography
-- `shared_preferences` - Local storage
-- `share_plus` - Share functionality
-- `flutter_animate` - Animations
-- `lucide_icons` - Icons
+See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for instructions on connecting to Firestore,
+Firebase Auth, and Cloud Functions.
 
-## Design System
+---
 
-### Colors (OKLCH-based)
-- Light Background: #FAFAFA
-- Dark Background: #0A0A0A
-- Primary (Light): #2D2D3A
-- Primary (Dark): #FAFAFA
-- Like Red: #EF4444
-- Streak Orange: #F97316
+## Tech Stack
 
-### Typography
-- Font Family: Geist (fallback to system)
-- Sizes: 12px - 60px scale
-- Weights: 400, 500, 600, 700
-
-### Spacing
-- Base unit: 4px
-- Scale: 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64px
-
-### Breakpoints
-- Mobile: < 640px
-- Tablet: 640px - 1024px
-- Desktop: > 1024px
-
-## Architecture
-
-The app follows a clean architecture pattern:
-
-1. **Models** - Data structures and enums
-2. **Services** - Pure business logic functions
-3. **Providers** - State management with Riverpod
-4. **Widgets** - Reusable UI components
-5. **Screens** - Page-level widgets with routing
-
-## Comparison with Web Version
-
-| Feature | Web (Next.js) | Flutter |
-|---------|---------------|---------|
-| Snap Scroll | CSS snap-y | PageView |
-| Theme | next-themes | Riverpod + MaterialApp |
-| Navigation | Next.js router | Navigator routes |
-| State | useState | Riverpod StateNotifier |
-| Styling | Tailwind CSS | Theme + constants |
-| Icons | Lucide React | Flutter Icons |
-
-## License
-
-MIT License - see the main project README for details.
+- **Flutter** + **Dart**
+- **flutter_riverpod** – state management
+- **google_fonts** – Inter typography
+- **shared_preferences** – local session persistence
+- **share_plus** – native share sheet
+- **flutter_animate** – micro-animations
