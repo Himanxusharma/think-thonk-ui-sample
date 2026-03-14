@@ -1,0 +1,48 @@
+name: think_thonk
+description: Think-Thonk UI - A modern content discovery feed application built with Flutter.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  
+  # Navigation
+  go_router: ^13.0.0
+  
+  # UI Components
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+  lucide_icons: ^0.257.0
+  
+  # Storage
+  shared_preferences: ^2.2.2
+  
+  # Utilities
+  intl: ^0.19.0
+  url_launcher: ^6.2.2
+  share_plus: ^7.2.1
+  
+  # Animations
+  flutter_animate: ^4.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  riverpod_generator: ^2.3.9
+  build_runner: ^2.4.7
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/

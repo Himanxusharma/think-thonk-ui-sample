@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Think-Thonk UI - A modern content discovery feed application">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Think Thonk">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>Think Thonk</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    const serviceWorkerVersion = null;
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+  
+  <style>
+    /* Hide scrollbars globally */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+    
+    /* Loading indicator */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #FAFAFA;
+    }
+    @media (prefers-color-scheme: dark) {
+      .loading {
+        background-color: #0A0A0A;
+      }
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #E5E5E8;
+      border-top-color: #2D2D3A;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @media (prefers-color-scheme: dark) {
+      .loading-spinner {
+        border-color: #2A2A2A;
+        border-top-color: #FAFAFA;
+      }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+            // Hide loading indicator
+            document.getElementById('loading').style.display = 'none';
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
